@@ -9,7 +9,6 @@ var apiV2 = require("./apiv2.js");
 
 app.set("port", process.env.PORT || 3000);
 
-app.use(morgan("short"));
 app.use("/v1", apiV1);
 app.use("/v2", apiV2);
 
