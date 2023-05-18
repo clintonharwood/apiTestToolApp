@@ -1,0 +1,14 @@
+{
+  "name": "simpleapi",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": "4.18.x"
+  }
+}
