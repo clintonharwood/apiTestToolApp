@@ -1,8 +1,18 @@
 var express = require("express");
+var logger = require("morgan");
+var path = require("path");
 
 var app = express();
 
+app.use(logger("short"));
+
+app.set("views", path.resolve(__dirname, "views"));
+app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
+
+app.get("/", function(req, res) {
+    res.render("index");
+});
 
 app.get("/v1/all", function(req, res) {
     res.send("You just sent a GET request to v1");
