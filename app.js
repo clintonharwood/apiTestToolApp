@@ -15,7 +15,13 @@ app.get("/", function(req, res) {
 });
 
 app.get("/v1/all", function(req, res) {
-    res.send("You just sent a GET request to v1");
+    res.status(200);
+    res.json({ result: "All records"});
+});
+
+app.get("/v1/500", function(req, res) {
+    res.status(500);
+    res.json({ result: "500 error"});
 });
 
 app.post("/v1", function(req, res) {
