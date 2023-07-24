@@ -16,7 +16,7 @@ app.get("/", function(req, res) {
 
 app.get("/v1/all", function(req, res) {
     res.status(200);
-    res.json({"products": [ { "id": 1, "title": "Phone", "description": "A mobile which is nothing like apple", "price": 549, "discountPercentage": 12.96, "rating": 4.69, "stock": 94, "category": "smartphones" }, { "id": 2, "title": "Wallet", "description": "Plain leather wallet", "price": 89, "discountPercentage": 17.94, "rating": 4.44, "stock": 34, "category": "wallets" }, { "id": 3, "title": "Hat", "description": "Plain black baseball hat", "price": 20, "discountPercentage": 15.46, "rating": 4.09, "stock": 36, "category": "clothing" }]});
+    res.json({"products": [{ "id": 1, "title": "Phone", "description": "A mobile which is nothing like apple", "price": 549, "discountPercentage": 12.96, "rating": 4.69, "stock": 94, "category": "smartphones" }, { "id": 2, "title": "Wallet", "description": "Plain leather wallet", "price": 89, "discountPercentage": 17.94, "rating": 4.44, "stock": 34, "category": "wallets" }, { "id": 3, "title": "Hat", "description": "Plain black baseball hat", "price": 20, "discountPercentage": 15.46, "rating": 4.09, "stock": 36, "category": "clothing" }]});
 });
 
 app.get("/v1/500", function(req, res) {
@@ -25,7 +25,8 @@ app.get("/v1/500", function(req, res) {
 });
 
 app.post("/v1", function(req, res) {
-    res.send("A POST request to v1");
+    res.status(201);
+    res.json({ result: "Record created"});
 });
 
 app.put("/v1", function(req, res) {
