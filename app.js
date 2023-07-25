@@ -1,6 +1,7 @@
 var express = require("express");
 var logger = require("morgan");
 var path = require("path");
+var timeout = require("connect-timeout");
 
 var app = express();
 
@@ -22,6 +23,9 @@ app.get("/v1/all", function(req, res) {
 app.get("/v1/500", function(req, res) {
     res.status(500);
     res.json({ result: "500 error"});
+});
+
+app.get("/v1/timeout", timeout("140s"), function(req, res) {
 });
 
 app.post("/v1", function(req, res) {
