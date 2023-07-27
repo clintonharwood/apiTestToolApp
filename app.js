@@ -32,7 +32,7 @@ app.get("/v1/500", function(req, res) {
 app.get("/v1/timeout", timeout("140s"), function(req, res) {
 });
 
-app.post("/v1", function(req, res) {
+app.post("/v1/create", function(req, res) {
     res.status(201);
     res.json({ result: "Record created"});
 });
