@@ -20,8 +20,8 @@ app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 
 var authServer = {
-	authorizationEndpoint: 'https://test.clintox.xyz/employees/s/services/oauth2/authorize',
-	tokenEndpoint: 'https://test.clintox.xyz/employees/s/services/oauth2/token'
+	authorizationEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/authorize',
+	tokenEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/token'
 };
 
 // client information
