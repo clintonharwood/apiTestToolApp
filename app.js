@@ -27,8 +27,8 @@ var authServer = {
 // client information
 
 var client = {
-	"client_id": "3MVG9pRzvMkjMb6k3PZjpqKd03WF.b_wRvZ_sHhzr1_Zrx.ZA0NY2zcFLotWPspJmNEePdyxIXd6h2KKU_lKR",
-	"client_secret": "55754B35BE821B68984E0E66FFE5CB73DDC2D3FA5D8EE3AB9AFD976E8A75268B",
+	"client_id": process.env.CLIENT_ID,
+	"client_secret": process.env.CLENT_SECRET,
 	"redirect_uris": ["https://clintox.xyz/callback"]
 };
 
