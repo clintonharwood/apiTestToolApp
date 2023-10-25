@@ -98,7 +98,7 @@ app.get('/callback', function(req, res){
 		access_token = body.access_token;
 		console.log('Got access token: %s', access_token);
 		
-		res.render('index', {access_token: access_token, scope: scope});
+		res.render('clientindex', {access_token: access_token, scope: scope});
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
 	}
