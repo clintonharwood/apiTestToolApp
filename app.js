@@ -19,18 +19,17 @@ app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 
-var authServer = {
+var authServerOne = {
 	authorizationEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/authorize',
 	tokenEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/token'
 };
 
-// var authServer = {
-// 	authorizationEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/authorize',
-// 	tokenEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/token'
-// };
+var authServerTwo = {
+	authorizationEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/authorize',
+	tokenEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/token'
+};
 
 // client information
-
 var client = {
 	"client_id": process.env.CLIENT_ID,
 	"client_secret": process.env.CLENT_SECRET,
@@ -41,14 +40,34 @@ var state = null;
 
 var access_token = null;
 var scope = null;
+var isAuthServerOne = false;
 
-app.get('/authorize', function(req, res) {
+app.get('/authorizeone', function(req, res) {
 
 	access_token = null;
+	isAuthServerOne = true;
 
 	state = randomstring.generate();
 	
-	var authorizeUrl = buildUrl(authServer.authorizationEndpoint, {
+	var authorizeUrl = buildUrl(authServerOne.authorizationEndpoint, {
+		response_type: 'code',
+		client_id: client.client_id,
+		redirect_uri: client.redirect_uris[0],
+		state: state
+	});
+	
+	console.log("redirect", authorizeUrl);
+	res.redirect(authorizeUrl);
+});
+
+app.get('/authorizetwo', function(req, res) {
+
+	access_token = null;
+	isAuthServerOne = false;
+
+	state = randomstring.generate();
+	
+	var authorizeUrl = buildUrl(authServerTwo.authorizationEndpoint, {
 		response_type: 'code',
 		client_id: client.client_id,
 		redirect_uri: client.redirect_uris[0],
@@ -85,7 +104,8 @@ app.get('/callback', function(req, res) {
 		'Authorization': 'Basic ' + encodeClientCredentials(client.client_id, client.client_secret)
 	};
 
-	var tokRes = request('POST', authServer.tokenEndpoint, {	
+	var authTokenEndpoint = isAuthServerOne ? authServerOne.tokenEndpoint : authServerTwo.tokenEndpoint
+	var tokRes = request('POST', authTokenEndpoint, {	
 			body: form_data,
 			headers: headers
 	});
