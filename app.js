@@ -19,9 +19,14 @@ app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 
+// var authServer = {
+// 	authorizationEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/authorize',
+// 	tokenEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/token'
+// };
+
 var authServer = {
-	authorizationEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/authorize',
-	tokenEndpoint: 'https://test.clintox.xyz/employees/services/oauth2/token'
+	authorizationEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/authorize',
+	tokenEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/token'
 };
 
 // client information
