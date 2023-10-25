@@ -20,8 +20,8 @@ app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 
 var authServer = {
-	authorizationEndpoint: 'https://devorg0923com-dev-ed.develop.my.salesforce.com/services/oauth2/authorize',
-	tokenEndpoint: 'https://devorg0923com-dev-ed.develop.my.salesforce.com/services/oauth2/token'
+	authorizationEndpoint: 'https://clintoxsupport.my.salesforce.com/employees/services/oauth2/authorize',
+	tokenEndpoint: 'https://clintoxsupport.my.salesforce.com/employees/services/oauth2/token'
 };
 
 // client information
