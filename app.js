@@ -37,10 +37,6 @@ var state = null;
 var access_token = null;
 var scope = null;
 
-app.get('/', function (req, res) {
-	res.render('index', {access_token: access_token, scope: scope});
-});
-
 app.get('/authorize', function(req, res){
 
 	access_token = null;
@@ -105,6 +101,10 @@ app.get('/callback', function(req, res){
 
 app.get("/", function(req, res) {
     res.render("index");
+});
+
+app.get('/auth', function (req, res) {
+	res.render('clientindex', {access_token: access_token, scope: scope});
 });
 
 app.get("/cmoney", function(req, res) {
