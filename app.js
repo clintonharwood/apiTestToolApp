@@ -2,6 +2,14 @@ var express = require("express");
 var logger = require("morgan");
 var path = require("path");
 var timeout = require("connect-timeout");
+var request = require("sync-request");
+var url = require("url");
+var qs = require("qs");
+var querystring = require('querystring');
+var cons = require('consolidate');
+var randomstring = require("randomstring");
+var __ = require('underscore');
+__.string = require('underscore.string');
 
 var app = express();
 
@@ -10,6 +18,90 @@ app.use(logger("short"));
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
+
+var authServer = {
+	authorizationEndpoint: 'https://devorg0923com-dev-ed.develop.my.salesforce.com/services/oauth2/authorize',
+	tokenEndpoint: 'https://devorg0923com-dev-ed.develop.my.salesforce.com/services/oauth2/token'
+};
+
+// client information
+
+var client = {
+	"client_id": "3MVG9pRzvMkjMb6k3PZjpqKd03WF.b_wRvZ_sHhzr1_Zrx.ZA0NY2zcFLotWPspJmNEePdyxIXd6h2KKU_lKR",
+	"client_secret": "55754B35BE821B68984E0E66FFE5CB73DDC2D3FA5D8EE3AB9AFD976E8A75268B",
+	"redirect_uris": ["https://clintox.xyz/callback"]
+};
+
+var state = null;
+
+var access_token = null;
+var scope = null;
+
+app.get('/', function (req, res) {
+	res.render('index', {access_token: access_token, scope: scope});
+});
+
+app.get('/authorize', function(req, res){
+
+	access_token = null;
+
+	state = randomstring.generate();
+	
+	var authorizeUrl = buildUrl(authServer.authorizationEndpoint, {
+		response_type: 'code',
+		client_id: client.client_id,
+		redirect_uri: client.redirect_uris[0],
+		state: state
+	});
+	
+	console.log("redirect", authorizeUrl);
+	res.redirect(authorizeUrl);
+});
+
+app.get('/callback', function(req, res){
+	
+	if (req.query.error) {
+		// it's an error response, act accordingly
+		res.render('error', {error: req.query.error});
+		return;
+	}
+	
+	if (req.query.state != state) {
+		console.log('State DOES NOT MATCH: expected %s got %s', state, req.query.state);
+		res.render('error', {error: 'State value did not match'});
+		return;
+	}
+
+	var code = req.query.code;
+
+	var form_data = qs.stringify({
+		grant_type: 'authorization_code',
+		code: code,
+		redirect_uri: client.redirect_uris[0]
+	});
+	var headers = {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Authorization': 'Basic ' + encodeClientCredentials(client.client_id, client.client_secret)
+	};
+
+	var tokRes = request('POST', authServer.tokenEndpoint, {	
+			body: form_data,
+			headers: headers
+	});
+
+	console.log('Requesting access token for code %s',code);
+	
+	if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+		var body = JSON.parse(tokRes.getBody());
+	
+		access_token = body.access_token;
+		console.log('Got access token: %s', access_token);
+		
+		res.render('index', {access_token: access_token, scope: scope});
+	} else {
+		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
+	}
+});
 
 app.get("/", function(req, res) {
     res.render("index");
@@ -44,6 +136,26 @@ app.put("/v1", function(req, res) {
 app.delete("/v1", function(req, res) {
     res.send("A DELETE request to v1");
 });
+
+var buildUrl = function(base, options, hash) {
+	var newUrl = url.parse(base, true);
+	delete newUrl.search;
+	if (!newUrl.query) {
+		newUrl.query = {};
+	}
+	__.each(options, function(value, key, list) {
+		newUrl.query[key] = value;
+	});
+	if (hash) {
+		newUrl.hash = hash;
+	}
+	
+	return url.format(newUrl);
+};
+
+var encodeClientCredentials = function(clientId, clientSecret) {
+	return Buffer.from(querystring.escape(clientId) + ':' + querystring.escape(clientSecret)).toString('base64');
+};
 
 app.listen(process.env.PORT || 3000, function() {
     console.log("App started on port 3000");
