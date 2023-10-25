@@ -42,7 +42,7 @@ var state = null;
 var access_token = null;
 var scope = null;
 
-app.get('/authorize', function(req, res){
+app.get('/authorize', function(req, res) {
 
 	access_token = null;
 
@@ -59,7 +59,7 @@ app.get('/authorize', function(req, res){
 	res.redirect(authorizeUrl);
 });
 
-app.get('/callback', function(req, res){
+app.get('/callback', function(req, res) {
 	
 	if (req.query.error) {
 		// it's an error response, act accordingly
