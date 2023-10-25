@@ -10,7 +10,7 @@ var cons = require('consolidate');
 var randomstring = require("randomstring");
 var __ = require('underscore');
 __.string = require('underscore.string');
-var dotenv = require('dotenv').config();
+var dotenv = require('dotenv').load();
 
 var app = express();
 
