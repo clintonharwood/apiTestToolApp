@@ -42,6 +42,10 @@ var access_token = null;
 var scope = null;
 var isAuthServerOne = false;
 
+app.get('/consentform', function(req, res) {
+	res.render("consentform");
+});
+
 app.get('/authorizeone', function(req, res) {
 
 	access_token = null;
