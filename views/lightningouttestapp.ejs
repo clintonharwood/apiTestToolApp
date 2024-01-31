@@ -8,13 +8,11 @@
     <title>Lightning Out Test Application</title>
 
     <link rel="canonical" href="">
-
-    <link rel="stylesheet" type="text/css" href="https://charwood-231102-76-demo.my.salesforce.com/prefcenter/preference-center-1.1.1/css/pref-center-slds.css">
   </head>
 
   <body>
     <div id="lightning-out-container"></div>
-    <script src="https://lightningoutcom-dev-ed.develop.my.salesforce.com/lightning/lightning.out.js"></script>
+    <script src="https://lightningoutcom-dev-ed.develop.my.site.com/lightning/lightning.out.js"></script>
     <script>    
         $Lightning.use("c:lightningOutFlow", function() {
             $Lightning.createComponent("c:displayFlow", 
@@ -22,7 +20,7 @@
                 'lightning-out-container', 
                 function(cmp) {}
             );
-            }, "https://lightningoutcom-dev-ed.develop.lightning.force.com"
+            }, "https://lightningoutcom-dev-ed.develop.my.site.com"
         );
     </script>
   </body>
