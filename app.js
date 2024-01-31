@@ -10,10 +10,13 @@ var cons = require('consolidate');
 var randomstring = require("randomstring");
 var __ = require('underscore');
 __.string = require('underscore.string');
+var cors = require("cors");
 
 var app = express();
 
 app.use(logger("short"));
+
+app.use(cors())
 
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
