@@ -61,6 +61,7 @@ app.get('webtocase', function(req, res) {
 	}, function(error, response, body) {
 		console.log(body);
 	});
+	res.render("index");
 });
 
 app.get('/consentform', function(req, res) {
