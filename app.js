@@ -47,8 +47,8 @@ var scope = null;
 var isAuthServerOne = false;
 
 app.get('/webtocase', function(req, res) {
-	request({
-		uri: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL",
+	request.post({
+		url: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL",
 		form: {
 			orgId: "00D5j00000CvOSL",
 			name: "Jerry",
@@ -57,11 +57,10 @@ app.get('/webtocase', function(req, res) {
 			subject: "Help me",
 			description: "Help me",
 			submit: "Help me"
+		}, function(error, response, body) {
+			res.render('webtocaseresult', {result: response})
 		}
-	}, function(error, response, body) {
-		res.render('webtocaseresult', {result: response})
 	});
-	res.render("index");
 });
 
 app.get('/consentform', function(req, res) {
