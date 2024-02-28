@@ -11,6 +11,7 @@ var randomstring = require("randomstring");
 var __ = require('underscore');
 __.string = require('underscore.string');
 var cors = require("cors");
+var request = require('request');
 
 var app = express();
 
@@ -44,6 +45,23 @@ var state = null;
 var access_token = null;
 var scope = null;
 var isAuthServerOne = false;
+
+app.get('webtocase', function(req, res) {
+	request({
+		uri: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL",
+		form: {
+			orgId: "00D5j00000CvOSL",
+			name: "Jerry",
+			email: "clinto_is@hotmail.com",
+			phone: "0432202928",
+			subject: "Help me",
+			description: "Help me",
+			submit: "Help me"
+		}
+	}, function(error, response, body) {
+		console.log(body);
+	});
+});
 
 app.get('/consentform', function(req, res) {
 	res.render("consentform");
