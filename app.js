@@ -59,7 +59,7 @@ app.get('/webtocase', function(req, res) {
 			submit: "Help me"
 		}
 	}, function(error, response, body) {
-		console.log(body);
+		res.render('webtocaseresult', {result: response})
 	});
 	res.render("index");
 });
