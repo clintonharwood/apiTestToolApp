@@ -46,7 +46,7 @@ var access_token = null;
 var scope = null;
 var isAuthServerOne = false;
 
-app.get('webtocase', function(req, res) {
+app.get('/webtocase', function(req, res) {
 	request({
 		uri: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL",
 		form: {
