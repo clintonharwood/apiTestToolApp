@@ -48,11 +48,11 @@ var isAuthServerOne = false;
 
 app.get('/webtocase', function(req, res) {
 	request.post({
-		url: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL",
+		url: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&debug=1&debugEmail=charwood%40salesforce.com",
 		form: {
 			orgId: "00D5j00000CvOSL",
 			name: "Jerry",
-			email: "clinto_is@hotmail.com",
+			email: "charwood%40salesforce.com",
 			phone: "0432202928",
 			subject: "Help me",
 			description: "Help me",
