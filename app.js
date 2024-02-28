@@ -57,10 +57,9 @@ app.get('/webtocase', function(req, res) {
 			subject: "Help me",
 			description: "Help me",
 			submit: "Help me"
-		}, function(error, response, body) {
+		}}, function(error, response, body) {
 			res.render('webtocaseresult', {result: response})
-		}
-	});
+		});
 });
 
 app.get('/consentform', function(req, res) {
