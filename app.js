@@ -47,7 +47,7 @@ var scope = null;
 var isAuthServerOne = false;
 
 app.get('/webtocase', function(req, res) {
-	request.post({
+	/*request.post({
 		url: "https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&debug=1&debugEmail=charwood%40salesforce.com",
 		form: {
 			orgId: "00D5j00000CvOSL",
@@ -62,7 +62,10 @@ app.get('/webtocase', function(req, res) {
 			console.log('Response: ' + response);
 			console.log('Body: ' + body);
 			res.render('webtocaseresult', {result: response})
-		});
+		}); */
+
+		request.get('https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&orgid=00D5j00000CvOSL&retURL=http%3A%2F%2F&name=Donald&email=clinto_is%40hotamil.com&phone=0323202928&subject=Test&description=Test&submit=Submit&debug=1&debugEmail=charwood%40salesforce.com');
+		res.render("webtocaseresult");
 });
 
 app.get('/consentform', function(req, res) {
