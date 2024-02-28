@@ -58,9 +58,9 @@ app.get('/webtocase', function(req, res) {
 			description: "Help me",
 			submit: "Help me"
 		}}, function(error, response, body) {
-			console.log(error);
-			console.log(response);
-			console.log(body);
+			console.log('Error: ' + error);
+			console.log('Response: ' + response);
+			console.log('Body: ' + body);
 			res.render('webtocaseresult', {result: response})
 		});
 });
