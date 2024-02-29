@@ -11,7 +11,7 @@ var randomstring = require("randomstring");
 var __ = require('underscore');
 __.string = require('underscore.string');
 var cors = require("cors");
-var request = require('request');
+var requestModule = require('request');
 
 var app = express();
 
