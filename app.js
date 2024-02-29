@@ -33,11 +33,22 @@ var authServerTwo = {
 	tokenEndpoint: 'https://clintoxsupport.my.site.com/employees/services/oauth2/token'
 };
 
+var salesforceAuthServer = {
+	authorizationEndpoint: 'https://clintoxsupport.my.salesforce.com/services/oauth2/authorize',
+	tokenEndpoint: 'https://clintoxsupport.my.salesforce.com/services/oauth2/token'
+};
+
 // client information
 var client = {
 	"client_id": process.env.CLIENT_ID,
 	"client_secret": process.env.CLENT_SECRET,
 	"redirect_uris": ["https://clintox.xyz/callback"]
+};
+
+var clientTwo = {
+	"client_id": process.env.CLIENT_ID_TWO,
+	"client_secret": process.env.CLENT_SECRET_TWO,
+	"redirect_uris": ["https://clintox.xyz/callbacknoncommunity"]
 };
 
 var state = null;
@@ -159,6 +170,65 @@ app.get('/callback', function(req, res) {
 	}
 });
 
+app.get('/callbacknoncommunity', function(req, res) {
+	
+	if (req.query.error) {
+		// it's an error response, act accordingly
+		res.render('error', {error: req.query.error});
+		return;
+	}
+	
+	if (req.query.state != state) {
+		console.log('State DOES NOT MATCH: expected %s got %s', state, req.query.state);
+		res.render('error', {error: 'State value did not match'});
+		return;
+	}
+
+	var code = req.query.code;
+
+	var form_data = qs.stringify({
+		grant_type: 'authorization_code',
+		code: code,
+		redirect_uri: clientTwo.redirect_uris[0]
+	});
+	var headers = {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Authorization': 'Basic ' + encodeClientCredentials(clientTwo.client_id, clientTwo.client_secret)
+	};
+
+	var authTokenEndpoint = salesforceAuthServer.tokenEndpoint;
+	var tokRes = request('POST', authTokenEndpoint, {	
+			body: form_data,
+			headers: headers
+	});
+
+	console.log('Requesting access token for code %s',code);
+	
+	if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+		var body = JSON.parse(tokRes.getBody());
+	
+		access_token = body.access_token;
+		console.log('Got access token: %s', access_token);
+
+		request({
+			headers: {
+				'Authorization': access_token,
+			  	'Content-Type': 'application/json'
+			},
+			uri: 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account',
+			body: JSON.stringify({Name: 'Clintox API Test Tool'}),
+			method: 'POST'
+		  }, function (err, res, body) {
+			console.log('Error: ' + err);
+			console.log('httpResponse: ' + res);
+			console.log('body: ' + body);
+		  });
+		res.render('createaccountui');
+	} else {
+		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
+	}
+});
+
 app.get("/", function(req, res) {
     res.render("index");
 });
@@ -195,6 +265,24 @@ app.put("/v1", function(req, res) {
 
 app.delete("/v1", function(req, res) {
     res.send("A DELETE request to v1");
+});
+
+app.get('/createaccount', function(req, res) {
+
+	access_token = null;
+	isAuthServerOne = true;
+
+	state = randomstring.generate();
+	
+	var authorizeUrl = buildUrl(salesforceAuthServer.authorizationEndpoint, {
+		response_type: 'code',
+		client_id: client.client_id,
+		redirect_uri: client.redirect_uris[0],
+		state: state
+	});
+	
+	console.log("redirect", authorizeUrl);
+	res.redirect(authorizeUrl);
 });
 
 var buildUrl = function(base, options, hash) {
