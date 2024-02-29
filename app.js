@@ -210,14 +210,13 @@ app.get('/callbacknoncommunity', function(req, res) {
 		access_token = body.access_token;
 		console.log('Got access token: %s', access_token);
 
-		request({
+		request.post({
 			headers: {
 				'Authorization': access_token,
 			  	'Content-Type': 'application/json'
 			},
-			uri: 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account',
-			body: JSON.stringify({Name: 'Clintox API Test Tool'}),
-			method: 'POST'
+			url: 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account',
+			body: JSON.stringify({Name: 'Clintox API Test Tool'})
 		  }, function (err, res, body) {
 			console.log('Error: ' + err);
 			console.log('httpResponse: ' + res);
