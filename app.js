@@ -276,8 +276,8 @@ app.get('/createaccount', function(req, res) {
 	
 	var authorizeUrl = buildUrl(salesforceAuthServer.authorizationEndpoint, {
 		response_type: 'code',
-		client_id: client.client_id,
-		redirect_uri: client.redirect_uris[0],
+		client_id: clientTwo.client_id,
+		redirect_uri: clientTwo.redirect_uris[0],
 		state: state
 	});
 	
