@@ -216,6 +216,7 @@ app.get('/callbacknoncommunity', function(req, res) {
 			  	'Content-Type': 'application/json'
 			},
 			url: 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account',
+			json: true,
 			body: JSON.stringify({Name: 'Clintox API Test Tool'})
 		  }, function (err, res, body) {
 			console.log('Error: ' + err);
