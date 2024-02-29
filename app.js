@@ -220,7 +220,7 @@ app.get('/callbacknoncommunity', function(req, res) {
 			headers: salesforceApiheaders
 		});
 		console.log(apiCall.statusCode);
-		res.render('createaccountui');
+		res.render('createaccountui', {result: apiCall.body});
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
 	}
