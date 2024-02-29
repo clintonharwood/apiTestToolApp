@@ -210,19 +210,16 @@ app.get('/callbacknoncommunity', function(req, res) {
 		access_token = body.access_token;
 		console.log('Got access token: %s', access_token);
 
-		request.post({
-			headers: {
-				'Authorization': access_token,
-			  	'Content-Type': 'application/json'
-			},
-			url: 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account',
-			json: true,
-			body: JSON.stringify({Name: 'Clintox API Test Tool'})
-		  }, function (err, res, body) {
-			console.log('Error: ' + err);
-			console.log('httpResponse: ' + res);
-			console.log('body: ' + body);
-		  });
+		var salesforceApiheaders = {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + access_token
+		};
+
+		var apiCall = request('POST', 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account', {	
+			body: JSON.stringify({Name: 'Clintox API Test Tool'}),
+			headers: salesforceApiheaders
+		});
+		console.log(apiCall.statusCode);
 		res.render('createaccountui');
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
