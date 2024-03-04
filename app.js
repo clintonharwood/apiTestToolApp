@@ -88,6 +88,10 @@ app.get('/lightningouttestapp', function(req, res) {
 	res.render("lightningouttestapp");
 });
 
+app.get('/casedetailsvfpage', function(req, res) {
+	res.render("casedetailsvfpage");
+});
+
 app.get('/authorizeone', function(req, res) {
 
 	access_token = null;
