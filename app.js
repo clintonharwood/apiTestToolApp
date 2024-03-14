@@ -243,7 +243,7 @@ app.get('/callbacknoncommunity', function(req, res) {
 			console.log(apiCall.headers);
 
 			var filename = "";
-			var disposition = apiCall.headers('Content-Disposition');
+			var disposition = apiCall.headers;
 			if (disposition && disposition.indexOf('attachment') !== -1) {
 				var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
 				var matches = filenameRegex.exec(disposition);
