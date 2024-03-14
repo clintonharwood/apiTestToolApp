@@ -56,6 +56,8 @@ var state = null;
 var access_token = null;
 var scope = null;
 var isAuthServerOne = false;
+var isCreateAccount = false;
+var isDownloadReport = false;
 
 app.get('/webtocase', function(req, res) {
 
@@ -214,17 +216,31 @@ app.get('/callbacknoncommunity', function(req, res) {
 		access_token = body.access_token;
 		console.log('Got access token: %s', access_token);
 
-		var salesforceApiheaders = {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + access_token
-		};
-
-		var apiCall = request('POST', 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account', {	
-			body: JSON.stringify({Name: 'Clintox API Test Tool'}),
-			headers: salesforceApiheaders
-		});
-		console.log(apiCall.statusCode);
-		res.render('createaccountui', {result: apiCall.body});
+		if (isCreateAccount) {
+			var salesforceApiheaders = {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + access_token
+			};
+	
+			var apiCall = request('POST', 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account', {	
+				body: JSON.stringify({Name: 'Clintox API Test Tool'}),
+				headers: salesforceApiheaders
+			});
+			console.log(apiCall.statusCode);
+			res.render('createaccountui', {result: apiCall.body});
+		} else if (isDownloadReport) {
+			var salesforceApiheaders = {
+				'Content-Type': 'application/json',
+				'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				'Authorization': 'Bearer ' + access_token
+			};
+	
+			var apiCall = request('GET', 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/analytics/reports/00O5K000000XecLUAS', {	
+				headers: salesforceApiheaders
+			});
+			console.log(apiCall.statusCode);
+			res.send(apiCall.body);
+		}
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
 	}
@@ -256,6 +272,7 @@ app.get("/v1/timeout", timeout("140s"), function(req, res) {
 });
 
 app.post("/v1/create", function(req, res) {
+	console.log(JSON.stringify(req.headers));
     res.status(201);
     res.json({ result: "Record created"});
 });
@@ -269,9 +286,17 @@ app.delete("/v1", function(req, res) {
 });
 
 app.get('/createaccount', function(req, res) {
+	isCreateAccount = true;
+	res.redirect(authorize());
+});
 
+app.get('/downloadReport', function(req, res) {
+	isDownloadReport = true;
+	res.redirect(authorize());
+});
+
+var authorize = function() {
 	access_token = null;
-	isAuthServerOne = true;
 
 	state = randomstring.generate();
 	
@@ -283,8 +308,8 @@ app.get('/createaccount', function(req, res) {
 	});
 	
 	console.log("redirect", authorizeUrl);
-	res.redirect(authorizeUrl);
-});
+	return authorizeUrl;
+}
 
 var buildUrl = function(base, options, hash) {
 	var newUrl = url.parse(base, true);
