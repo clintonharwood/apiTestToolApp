@@ -241,6 +241,18 @@ app.get('/callbacknoncommunity', function(req, res) {
 			console.log(apiCall.statusCode);
 			console.log(apiCall.body);
 			console.log(apiCall.headers);
+
+			var filename = "";
+			var disposition = apiCall.headers('Content-Disposition');
+			if (disposition && disposition.indexOf('attachment') !== -1) {
+				var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+				var matches = filenameRegex.exec(disposition);
+				if (matches != null && matches[1]) { 
+				  filename = matches[1].replace(/['"]/g, '');
+				}
+			}
+			console.log(filename);
+
 			req.header('Content-Type', 'text/csv');
 			res.attachment('report.csv');
 			res.send(apiCall.body);
