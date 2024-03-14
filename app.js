@@ -243,6 +243,7 @@ app.get('/callbacknoncommunity', function(req, res) {
 			req.header('Content-Type', 'text/csv');
 			res.attachment('report.csv');
 			res.send(apiCall.body);
+			res.render("index");
 		}
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
