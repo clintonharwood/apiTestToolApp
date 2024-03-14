@@ -238,23 +238,9 @@ app.get('/callbacknoncommunity', function(req, res) {
 			var apiCall = request('GET', 'https://clintoxsupport.my.salesforce.com/services/data/v60.0/analytics/reports/00O5K000000XecLUAS', {	
 				headers: salesforceApiheaders
 			});
-			console.log(apiCall.statusCode);
-			console.log(apiCall.body);
-			console.log(apiCall.headers);
 
-			var filename = "";
-			var disposition = apiCall.headers;
-			if (disposition && disposition.indexOf('attachment') !== -1) {
-				var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-				var matches = filenameRegex.exec(disposition);
-				if (matches != null && matches[1]) { 
-				  filename = matches[1].replace(/['"]/g, '');
-				}
-			}
-			console.log(filename);
-
-			req.header('Content-Type', 'text/csv');
-			res.attachment('report.csv');
+			req.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			res.attachment('report.xlsx');
 			res.send(apiCall.body);
 		}
 	} else {
