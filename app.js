@@ -239,6 +239,9 @@ app.get('/callbacknoncommunity', function(req, res) {
 				headers: salesforceApiheaders
 			});
 			console.log(apiCall.statusCode);
+			console.log(apiCall.body);
+			req.header('Content-Type', 'text/csv');
+			res.attachment('report.csv');
 			res.send(apiCall.body);
 		}
 	} else {
