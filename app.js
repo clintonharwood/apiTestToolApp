@@ -265,7 +265,6 @@ app.get('/callbackclientcredsflow', function(req, res) {
 
 app.get('/authorizeThree', function(req, res) {
 
-
 	var form_data = qs.stringify({
 		grant_type: 'client_credentials',
 		client_id: clientThree.client_id,
@@ -282,7 +281,7 @@ app.get('/authorizeThree', function(req, res) {
 			headers: headers
 	});
 
-	console.log('Requesting access token for code %s',code);
+	console.log('Requesting access token');
 	
 	if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
 		var body = JSON.parse(tokRes.getBody());
