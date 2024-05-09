@@ -11,7 +11,7 @@ var randomstring = require("randomstring");
 var __ = require('underscore');
 __.string = require('underscore.string');
 var cors = require("cors");
-var requestModule = require('request');
+//var requestModule = require('request');
 
 var app = express();
 
@@ -38,6 +38,11 @@ var salesforceAuthServer = {
 	tokenEndpoint: 'https://clintoxsupport.my.salesforce.com/services/oauth2/token'
 };
 
+var salesforceAuthServerClientCredsFlow = {
+	tokenEndpoint: 'https://clintoxsupport.my.salesforce.com/services/oauth2/token'
+};
+
+
 // client information
 var client = {
 	"client_id": process.env.CLIENT_ID,
@@ -49,6 +54,12 @@ var clientTwo = {
 	"client_id": process.env.CLIENT_ID_TWO,
 	"client_secret": process.env.CLENT_SECRET_TWO,
 	"redirect_uris": ["https://clintox.xyz/callbacknoncommunity"]
+};
+
+var clientThree = {
+	"client_id": process.env.CLIENT_ID_THRE,
+	"client_secret": process.env.CLIENT_SECRET_THREE,
+	"redirect_uris": ["https://clintox.xyz/callbackclientcredsflow"]
 };
 
 var state = null;
@@ -243,6 +254,41 @@ app.get('/callbacknoncommunity', function(req, res) {
 			res.attachment('report.xlsx');
 			res.send(apiCall.body);
 		}
+	} else {
+		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
+	}
+});
+
+app.get('/callbackclientcredsflow', function(req, res) {
+	console.log('Inside callbackclientcredsflow');
+});
+
+app.get('/authorizeThree', function(req, res) {
+
+
+	var form_data = qs.stringify({
+		grant_type: 'client_credentials',
+		client_id: clientThree.client_id,
+		client_secret: clientThree.client_secret
+	});
+
+	var headers = {
+		'Content-Type': 'application/x-www-form-urlencoded'
+	};
+
+	var authTokenEndpoint = salesforceAuthServerClientCredsFlow.tokenEndpoint;
+	var tokRes = request('POST', authTokenEndpoint, {	
+			body: form_data,
+			headers: headers
+	});
+
+	console.log('Requesting access token for code %s',code);
+	
+	if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+		var body = JSON.parse(tokRes.getBody());
+	
+		access_token = body.access_token;
+		console.log('Got access token: %s', access_token);
 	} else {
 		res.render('error', {error: 'Unable to fetch access token, server response: ' + tokRes.statusCode})
 	}
