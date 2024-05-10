@@ -57,7 +57,7 @@ var clientTwo = {
 };
 
 var clientThree = {
-	"client_id": process.env.CLIENT_ID_THRE,
+	"client_id": process.env.CLIENT_ID_THREE,
 	"client_secret": process.env.CLIENT_SECRET_THREE,
 	"redirect_uris": ["https://clintox.xyz/callbackclientcredsflow"]
 };
