@@ -18,7 +18,7 @@ var app = express();
 
 app.use(logger("short"));
 
-app.use(helmet({ action: "sameorigin" }));
+app.use(helmet({xFrameOptions: { action: "sameorigin"},}));
 
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
