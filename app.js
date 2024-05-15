@@ -12,12 +12,13 @@ var __ = require('underscore');
 __.string = require('underscore.string');
 var cors = require("cors");
 //var requestModule = require('request');
+var frameguard = require("frameguard");
 
 var app = express();
 
 app.use(logger("short"));
 
-app.use(cors())
+app.use(frameguard({ action: "sameorigin" }));
 
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
