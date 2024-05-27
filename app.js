@@ -21,6 +21,16 @@ app.use(logger("short"));
 
 app.use(helmet({xFrameOptions: { action: "sameorigin"},}));
 
+app.use(
+	helmet({
+	  contentSecurityPolicy: {
+		directives: {
+		  "script-src": ["'self'", "https://www.w3schools.com"]
+		},
+	  },
+	}),
+  );
+
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
@@ -71,11 +81,6 @@ var scope = null;
 var isAuthServerOne = false;
 var isCreateAccount = false;
 var isDownloadReport = false;
-
-app.use(function(req, res, next) {
-    res.setHeader("Content-Security-Policy", "script-src '*'");
-    return next();
-});
 
 app.get('/webtocase', function(req, res) {
 
