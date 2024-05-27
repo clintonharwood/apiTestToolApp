@@ -25,7 +25,7 @@ app.use(
 	helmet({
 	  contentSecurityPolicy: {
 		directives: {
-		  "frame-src": ["'self'", "https://https://devorg0923com-dev-ed--c.develop.vf.force.com"]
+			frameSrc: ["'self'", 'https://https://devorg0923com-dev-ed--c.develop.vf.force.com']
 		},
 	  },
 	}),
