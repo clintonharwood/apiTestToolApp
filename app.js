@@ -25,7 +25,7 @@ app.use(
 	helmet({
 	  contentSecurityPolicy: {
 		directives: {
-			frameSrc: ['https://devorg0923com-dev-ed--c.develop.vf.force.com','https://api.clintox.xyz']
+			frameSrc: ['https://devorg0923com-dev-ed--c.develop.vf.force.com','https://api.clintox.xyz', 'https://devorg0923com-dev-ed.develop.lightning.force.com']
 		},
 	  },
 	}),
