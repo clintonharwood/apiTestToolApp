@@ -15,6 +15,7 @@ var cors = require("cors");
 var helmet = require("helmet");
 
 var app = express();
+app.use(cors());
 
 app.use(logger("short"));
 
