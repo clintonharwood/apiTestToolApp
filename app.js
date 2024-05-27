@@ -25,7 +25,7 @@ app.use(
 	helmet({
 	  contentSecurityPolicy: {
 		directives: {
-		  "script-src": ["'self'", "https://www.w3schools.com"]
+		  "frame-src": ["'self'", "https://https://devorg0923com-dev-ed--c.develop.vf.force.com"]
 		},
 	  },
 	}),
