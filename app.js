@@ -72,6 +72,11 @@ var isAuthServerOne = false;
 var isCreateAccount = false;
 var isDownloadReport = false;
 
+app.use(function(req, res, next) {
+    res.setHeader("Content-Security-Policy", "script-src '*'");
+    return next();
+});
+
 app.get('/webtocase', function(req, res) {
 
 	/*requestModule.post({url: 'https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&debug=1&debugEmail=clinto_is%40hotmail.com', 
