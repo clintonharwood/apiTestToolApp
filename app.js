@@ -26,8 +26,8 @@ app.use(
 	  contentSecurityPolicy: {
 		directives: {
 			frameSrc: ['https://test.clintox.xyz/','https://clintoxsupport.my.salesforce-sites.com','https://devorg0923com-dev-ed--c.develop.vf.force.com','https://api.clintox.xyz', 'https://devorg0923com-dev-ed.develop.lightning.force.com'],
-			scriptSrc: ["'self'","https://getbootstrap.com","https://cdn.jsdelivr.net"],
-			imgSrc: ["'self'","https://getbootstrap.com"]
+			scriptSrc: ["'self'","https://getbootstrap.com","https://cdn.jsdelivr.net","https://d1q000001eewuuaa-dev-ed.develop.my.site.com","https://charwood-231102-76-demo.my.salesforce.com"],
+			imgSrc: ["'self'","https://getbootstrap.com","https://upload.wikimedia.org"]
 		},
 	  },
 	}),
