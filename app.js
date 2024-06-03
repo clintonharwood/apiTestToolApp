@@ -108,10 +108,6 @@ app.get('/webtocase', function(req, res) {
 	res.render('webtocaseresult',{result: 'Success'});
 });
 
-app.get('/consentform', function(req, res) {
-	res.render("consentform");
-});
-
 app.get('/casedetailsvfpage', function(req, res) {
 	res.render("casedetailsvfpage");
 });
