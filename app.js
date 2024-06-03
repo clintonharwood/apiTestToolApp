@@ -25,7 +25,8 @@ app.use(
 	helmet({
 	  contentSecurityPolicy: {
 		directives: {
-			frameSrc: ['https://test.clintox.xyz/','https://clintoxsupport.my.salesforce-sites.com','https://devorg0923com-dev-ed--c.develop.vf.force.com','https://api.clintox.xyz', 'https://devorg0923com-dev-ed.develop.lightning.force.com']
+			frameSrc: ['https://test.clintox.xyz/','https://clintoxsupport.my.salesforce-sites.com','https://devorg0923com-dev-ed--c.develop.vf.force.com','https://api.clintox.xyz', 'https://devorg0923com-dev-ed.develop.lightning.force.com'],
+			scriptSrc: ["'self'", "https://getbootstrap.com"]
 		},
 	  },
 	}),
