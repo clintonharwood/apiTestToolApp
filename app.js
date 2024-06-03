@@ -112,10 +112,6 @@ app.get('/consentform', function(req, res) {
 	res.render("consentform");
 });
 
-app.get('/lightningouttestapp', function(req, res) {
-	res.render("lightningouttestapp");
-});
-
 app.get('/casedetailsvfpage', function(req, res) {
 	res.render("casedetailsvfpage");
 });
