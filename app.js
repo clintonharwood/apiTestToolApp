@@ -325,11 +325,11 @@ app.get("/cmoney", function(req, res) {
     res.render("cmoney");
 });
 
-app.get("/randomsfpage", function() {
+app.get("/randomsfpage", function(req, res) {
 	res.render("randomSfPage");
 });
 
-app.get("/random", function() {
+app.get("/random", function(req, res) {
 	const randomIndex = Math.floor(Math.random() * salesforceDocs.length);
 	res.redirect(salesforceDocs[randomIndex]);
 });
