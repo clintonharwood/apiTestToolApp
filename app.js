@@ -336,7 +336,7 @@ app.get("/cmoney", function(req, res) {
 });
 
 app.get("/randomsfpage", function(req, res) {
-	res.render("randomsfpage");
+	res.render("sfpagegen");
 });
 
 app.get("/random", function(req, res) {
