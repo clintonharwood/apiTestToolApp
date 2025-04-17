@@ -14,6 +14,19 @@ var cors = require("cors");
 //var requestModule = require('request');
 var helmet = require("helmet");
 
+const salesforceDocs = [
+	'https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_anonymous_block.htm',
+	'https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_curl.htm',
+	'https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_class_Auth_AuthConfiguration.htm',
+	'https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_quickstart_retrieve_add_components.htm',
+	'https://developer.salesforce.com/docs/component-library/bundle/lightning-accordion/example',
+	'https://developer.salesforce.com/docs/component-library/bundle/aura:component/documentation',
+	'https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_debugging_system_log_console.htm',
+	'https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_limits.htm',
+	'https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_class_Auth_OAuthRefreshResult.htm#apex_Auth_OAuthRefreshResult_constructors',
+	'https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/file_based.htm'
+];
+
 var app = express();
 app.use(cors());
 
@@ -310,6 +323,15 @@ app.get('/auth', function (req, res) {
 
 app.get("/cmoney", function(req, res) {
     res.render("cmoney");
+});
+
+app.get("/randomsfpage", function() {
+	res.render("randomSfPage");
+});
+
+app.get("/random", function() {
+	const randomIndex = Math.floor(Math.random() * salesforceDocs.length);
+	res.redirect(salesforceDocs[randomIndex]);
 });
 
 app.get("/v1/all", function(req, res) {
