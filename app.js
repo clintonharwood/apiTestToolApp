@@ -327,6 +327,10 @@ app.get("/", function(req, res) {
     res.render("index");
 });
 
+app.get('/tests', function (req, res) {
+	res.render("tests");
+});
+
 app.get('/auth', function (req, res) {
 	res.render('clientindex', {access_token: access_token, scope: scope});
 });
