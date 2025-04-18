@@ -58,7 +58,7 @@ app.use(
 	}),
 );
 
-app.use(favicon(path.join(path.resolve(__dirname, "views"), "favicon.ico")));
+app.use(favicon(path.join(path.resolve(__dirname, "images"), "favicon.ico")));
 
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
