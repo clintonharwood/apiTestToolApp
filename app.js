@@ -13,7 +13,6 @@ __.string = require('underscore.string');
 var cors = require("cors");
 //var requestModule = require('request');
 var helmet = require("helmet");
-var favicon = require('serve-favicon');
 
 const salesforceDocs = [
 	'https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_anonymous_block.htm',
@@ -57,9 +56,6 @@ app.use(
 	  },
 	}),
 );
-
-app.use(favicon(path.join(path.resolve(__dirname, "images"), "favicon.ico")));
-console.log(path.join(path.resolve(__dirname, "images"), "favicon.ico"));
 
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
