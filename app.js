@@ -327,8 +327,8 @@ app.get("/", function(req, res) {
     res.render("index");
 });
 
-app.get('/tests', function (req, res) {
-	res.render("tests");
+app.get('/api', function (req, res) {
+	res.render("api");
 });
 
 app.get('/auth', function (req, res) {
