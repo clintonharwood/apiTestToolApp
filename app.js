@@ -64,6 +64,7 @@ app.use(
           "https://charwood-231102-76-demo.my.salesforce.com",
           "'sha256-5spuWCVR8naaA9qHWsLq9BLZVhf+GmOU7bYeAW/YKl8='",
           "https://www.googletagmanager.com",
+          "sha256-01McX6yilenjHdhh6gHZhqoQd8yF5YZ0HT/Lg0X0ZJU=",
         ],
         imgSrc: [
           "'self'",
