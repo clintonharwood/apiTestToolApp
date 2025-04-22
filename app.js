@@ -35,6 +35,7 @@ const salesforceDocs = [
   "https://developer.salesforce.com/docs/component-library/bundle/lightning-file-upload/documentation",
   "https://developer.salesforce.com/docs/component-library/bundle/lightning-layout-item/example",
   "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_rest_deploy.htm",
+  "https://developer.salesforce.com/docs/einstein/genai/guide/agent-api.html",
 ];
 
 var app = express();
