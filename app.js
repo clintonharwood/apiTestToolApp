@@ -63,6 +63,7 @@ app.use(
           "https://d1q000001eewuuaa-dev-ed.develop.my.site.com",
           "https://charwood-231102-76-demo.my.salesforce.com",
           "'sha256-5spuWCVR8naaA9qHWsLq9BLZVhf+GmOU7bYeAW/YKl8='",
+          "https://www.googletagmanager.com",
         ],
         imgSrc: [
           "'self'",
