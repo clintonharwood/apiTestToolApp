@@ -74,6 +74,7 @@ app.use(
         connectSrc: [
           "'self'",
           "https://charwood-231102-76-demo.my.salesforce.com",
+          "https://www.google-analytics.com",
         ],
       },
     },
