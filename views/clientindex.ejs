@@ -143,11 +143,15 @@
     </header>
 
     <main class="px-3">
-      <p>Access token value:</p>
-      <p><%- access_token ? access_token : 'NONE' %></p>
-      <a class="btn btn-primary" href="/authorizeOne" role="button">Get OAuth Token CD</a>
+      <p class="lead">Access token value: <%- access_token ? access_token : 'NONE' %></p>
+      <p class="lead">
+        <a href="/authorizeOne" class="btn btn-lg btn-light fw-bold border-white bg-white">Get OAuth Token CD</a>
+        <a href="/authorizeTwo" class="btn btn-lg btn-light fw-bold border-white bg-white">Get OAuth Token ES</a>
+        <a href="/authorizeThree" class="btn btn-lg btn-light fw-bold border-white bg-white">Get Client Creds</a>
+      </p>
+      <!-- <a class="btn btn-primary" href="/authorizeOne" role="button">Get OAuth Token CD</a>
       <a class="btn btn-primary" href="/authorizeTwo" role="button">Get OAuth Token ES</a>
-      <a class="btn btn-primary" href="/authorizeThree" role="button">Get Client Creds</a>
+      <a class="btn btn-primary" href="/authorizeThree" role="button">Get Client Creds</a> -->
     </main>
 
     <footer class="mt-auto text-white-50">
