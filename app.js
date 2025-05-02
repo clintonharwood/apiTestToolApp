@@ -506,9 +506,9 @@ app.get("/publishPlatfromEvent", function (req, res) {
     // Got a valid token now pulbish a Platform Event
     let platformEventEndpointUrl =
       "https://clintoxsupport.my.salesforce.com/services/data/v63.0/sobjects/Clintox_Test_Event__e/";
-    let pe_form_data = qs.stringify({
+    let pe_form_data = {
       Order_id__c: "po1002",
-    });
+    };
     var peHeaders = {
       "Content-Type": "application/json",
       Authorization: "Bearer " + body.access_token,
