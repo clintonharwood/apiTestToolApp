@@ -475,6 +475,68 @@ app.get("/downloadReport", function (req, res) {
   res.redirect(authorize());
 });
 
+app.get("/createPlatformEvent", function (req, res) {
+  res.render("platformEvent", { pe_response: "" });
+});
+
+app.get("/publishPlatfromEvent", function (req, res) {
+  // Get an access token
+  var form_data = qs.stringify({
+    grant_type: "client_credentials",
+    client_id: clientThree.client_id,
+    client_secret: clientThree.client_secret,
+  });
+
+  var headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  var authTokenEndpoint = salesforceAuthServerClientCredsFlow.tokenEndpoint;
+  var tokRes = request("POST", authTokenEndpoint, {
+    body: form_data,
+    headers: headers,
+  });
+
+  console.log("Requesting access token");
+
+  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+    var body = JSON.parse(tokRes.getBody());
+
+    console.log("Got access token: %s", body.access_token);
+    // Got a valid token now pulbish a Platform Event
+    let platformEventEndpointUrl =
+      "https://clintoxsupport.my.salesforce.com/services/data/v63.0/sobjects/Clintox_Test_Event__e/";
+    let pe_form_data = qs.stringify({
+      Order_id__c: "po1002",
+    });
+    var peHeaders = {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: "Bearer " + body.access_token,
+    };
+
+    let eventRes = request("POST", platformEventEndpointUrl, {
+      body: pe_form_data,
+      headers: peHeaders,
+    });
+
+    if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+      var body = JSON.parse(tokRes.getBody());
+
+      console.log("Platform Event Success: %s", body);
+      res.render("platformEvent", { pe_response: body });
+    } else {
+      res.render("error", {
+        error: "Unable to Publish platform Event: " + tokRes.statusCode,
+      });
+    }
+  } else {
+    res.render("error", {
+      error:
+        "Unable to fetch access token, server response: " + tokRes.statusCode,
+    });
+  }
+});
+
 var authorize = function () {
   access_token = null;
 
