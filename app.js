@@ -522,8 +522,11 @@ app.get("/publishPlatfromEvent", function (req, res) {
     if (eventRes.statusCode >= 200 && eventRes.statusCode < 300) {
       var body = JSON.parse(eventRes.getBody());
 
-      console.log("Platform Event Success: %s", body);
-      res.render("platformEvent", { pe_response: body });
+      console.log(
+        "Platform Event Success: %s",
+        eventRes.statusCode + " " + eventRes.body
+      );
+      res.render("platformEvent", { pe_response: eventRes.body });
     } else {
       res.render("error", {
         error: "Unable to Publish platform Event: " + eventRes.statusCode,
