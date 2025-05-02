@@ -510,12 +510,12 @@ app.get("/publishPlatfromEvent", function (req, res) {
       Order_id__c: "po1002",
     });
     var peHeaders = {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
       Authorization: "Bearer " + body.access_token,
     };
 
     let eventRes = request("POST", platformEventEndpointUrl, {
-      body: pe_form_data,
+      json: pe_form_data,
       headers: peHeaders,
     });
 
