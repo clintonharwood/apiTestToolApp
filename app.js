@@ -408,41 +408,43 @@ app.get("/random", function (req, res) {
 });
 
 app.get("/v1/all", function (req, res) {
-  res.status(200);
-  res.json({
-    products: [
-      {
-        id: 1,
-        title: "Phone",
-        description: "A mobile which is nothing like apple",
-        price: 549,
-        discountPercentage: 12.96,
-        rating: 4.69,
-        stock: 94,
-        category: "smartphones",
-      },
-      {
-        id: 2,
-        title: "Wallet",
-        description: "Plain leather wallet",
-        price: 89,
-        discountPercentage: 17.94,
-        rating: 4.44,
-        stock: 34,
-        category: "wallets",
-      },
-      {
-        id: 3,
-        title: "Hat",
-        description: "Plain black baseball hat",
-        price: 20,
-        discountPercentage: 15.46,
-        rating: 4.09,
-        stock: 36,
-        category: "clothing",
-      },
-    ],
-  });
+  setTimeout(() => {
+    res.status(200);
+    res.json({
+      products: [
+        {
+          id: 1,
+          title: "Phone",
+          description: "A mobile which is nothing like apple",
+          price: 549,
+          discountPercentage: 12.96,
+          rating: 4.69,
+          stock: 94,
+          category: "smartphones",
+        },
+        {
+          id: 2,
+          title: "Wallet",
+          description: "Plain leather wallet",
+          price: 89,
+          discountPercentage: 17.94,
+          rating: 4.44,
+          stock: 34,
+          category: "wallets",
+        },
+        {
+          id: 3,
+          title: "Hat",
+          description: "Plain black baseball hat",
+          price: 20,
+          discountPercentage: 15.46,
+          rating: 4.09,
+          stock: 36,
+          category: "clothing",
+        },
+      ],
+    })
+  }, 20000);
 });
 
 app.get("/v1/500", function (req, res) {
@@ -549,6 +551,7 @@ app.get("/sendFileMIAW", function (req, res) {
   let pload =
     "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";
   let uuid = generateUUID();
+  console.log(uuid);
 
   const authEndpoint =
     "https://clintoxsupport.my.salesforce-scrt.com/iamessage/api/v2/authorization/unauthenticated/access-token";
@@ -580,7 +583,7 @@ app.get("/sendFileMIAW", function (req, res) {
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     var body = JSON.parse(tokRes.getBody());
     accessToken = body.accessToken;
-    console.log("Got access token");
+    console.log("Got access token: " + accessToken);
 
     //create conversation
     var coHeaders = {
