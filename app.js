@@ -55,6 +55,7 @@ app.use(
           "https://devorg0923com-dev-ed--c.develop.vf.force.com",
           "https://api.clintox.xyz",
           "https://devorg0923com-dev-ed.develop.lightning.force.com",
+          "https://truemoney.my.salesforce-sites.com"
         ],
         scriptSrc: [
           "'self'",
