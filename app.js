@@ -309,7 +309,9 @@ app.get("/callbackreuse", function (req, res) {
   var authTokenEndpoint = isAuthServerOne
     ? authServerOne.tokenEndpoint
     : authServerTwo.tokenEndpoint;
-  var tokRes = request("POST", authTokenEndpoint, {
+
+  setTimeout(() => { 
+    var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
   });
@@ -323,24 +325,13 @@ app.get("/callbackreuse", function (req, res) {
     body: form_data,
     headers: headers,
   });
-
-    if (tokResTwo.statusCode >= 200 && tokRes.statusCode < 300) {
-      var body = JSON.parse(tokRes.getBody());
-      access_token = body.access_token;
-      console.log("Got access token: %s", access_token);
-      res.render("clientindex", { access_token: access_token, scope: scope });
-    } else {
-      res.render("error", {
-      error:
-        "Unable to fetch access token a second, server response: " + tokResTwo.statusCode,
-    });
-    }
   } else {
     res.render("error", {
       error:
         "Unable to fetch access token, server response: " + tokRes.body,
     });
-  }
+  }}, 70000);
+ 
 });
 
 app.get("/callbacknoncommunity", function (req, res) {
