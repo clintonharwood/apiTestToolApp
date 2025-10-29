@@ -333,13 +333,13 @@ app.get("/callbackreuse", function (req, res) {
     } else {
       res.render("error", {
       error:
-        "Unable to fetch access token a second time, server response: " + tokResTwo,
+        "Unable to fetch access token a second, server response: " + tokResTwo.statusCode,
     });
     }
   } else {
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes,
+        "Unable to fetch access token, server response: " + tokRes.stringBody,
     });
   }
 });
