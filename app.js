@@ -308,6 +308,7 @@ app.get("/callbackreuse", function (req, res) {
   };
 
   console.log('encodeClientCredentials: ' + encodeClientCredentials(clientFour.client_id, clientFour.client_secret));
+  console.log('Consumer Id: ' + clientFour.client_id);
 
   var authTokenEndpoint = isAuthServerOne
     ? authServerOne.tokenEndpoint
