@@ -304,9 +304,6 @@ app.get("/callbackreuse", function (req, res) {
   });
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
-    Authorization:
-      "Basic " +
-      encodeClientCredentials(clientFour.client_id, clientFour.client_secret),
   };
 
   console.log('encodeClientCredentials: ' + encodeClientCredentials(clientFour.client_id, clientFour.client_secret));
