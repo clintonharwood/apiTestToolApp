@@ -251,10 +251,7 @@ app.get("/callback", function (req, res) {
       encodeClientCredentials(client.client_id, client.client_secret),
   };
 
-  var authTokenEndpoint = isAuthServerOne
-    ? authServerOne.tokenEndpoint
-    : authServerTwo.tokenEndpoint;
-  var tokRes = request("POST", authTokenEndpoint, {
+  var tokRes = request("POST", authServerTwo.tokenEndpoint, {
     body: form_data,
     headers: headers,
   });
