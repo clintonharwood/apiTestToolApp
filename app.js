@@ -300,7 +300,7 @@ app.get("/callbackreuse", function (req, res) {
     code: code, 
     redirect_uri: clientFour.redirect_uris[0],
     client_id: clientFour.client_id,
-    client_secret: lientFour.client_secret
+    client_secret: clientFour.client_secret
   });
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
