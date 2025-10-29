@@ -299,15 +299,13 @@ app.get("/callbackreuse", function (req, res) {
     grant_type: "authorization_code",
     code: code, 
     redirect_uri: clientFour.redirect_uris[0],
-    client_id: clientFour.client_id,
-    client_secret: clientFour.client_secret
   });
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
+    Authorization:
+      "Basic " +
+      encodeClientCredentials(clientFour.client_id, clientFour.client_secret),
   };
-
-  console.log('encodeClientCredentials: ' + encodeClientCredentials(clientFour.client_id, clientFour.client_secret));
-  console.log('Consumer Id: ' + clientFour.client_id);
 
   var authTokenEndpoint = isAuthServerOne
     ? authServerOne.tokenEndpoint
