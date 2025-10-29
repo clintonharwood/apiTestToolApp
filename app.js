@@ -294,44 +294,7 @@ app.get("/callbackreuse", function (req, res) {
   }
 
   var code = req.query.code;
-
-  var form_data = qs.stringify({
-    grant_type: "authorization_code",
-    code: code, 
-    redirect_uri: clientFour.redirect_uris[0],
-    client_id: clientFour.client_id,
-    client_secret: clientFour.client_secret
-  });
-  var headers = {
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
-
-  var authTokenEndpoint = isAuthServerOne
-    ? authServerOne.tokenEndpoint
-    : authServerTwo.tokenEndpoint;
-
-  setTimeout(() => { 
-    var tokRes = request("POST", authTokenEndpoint, {
-    body: form_data,
-    headers: headers,
-  });
-
   console.log("Requesting access token for code %s", code);
-
-  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
-    // Try to reuse the authorisation code 
-    console.log("Got an access token. Requesting another access token");
-    var tokResTwo = request("POST", authTokenEndpoint, {
-    body: form_data,
-    headers: headers,
-  });
-  } else {
-    res.render("error", {
-      error:
-        "Unable to fetch access token, server response: " + tokRes.body,
-    });
-  }}, 70000);
- 
 });
 
 app.get("/callbacknoncommunity", function (req, res) {
