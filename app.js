@@ -133,7 +133,7 @@ var clientThree = {
 var clientFour = {
   client_id: process.env.CLIENT_ID_FOUR,
   client_secret: process.env.CLIENT_SECRET_FOUR,
-  redirect_uris: ["https://clintox.xyz/callbackresuse"],
+  redirect_uris: ["https://clintox.xyz/callbackreuse"],
 };
 
 var state = null;
@@ -173,7 +173,6 @@ app.get("/casedetailsvfpage", function (req, res) {
 app.get("/authorizeone", function (req, res) {
   access_token = null;
   isAuthServerOne = true;
-
   state = randomstring.generate();
 
   var authorizeUrl = buildUrl(authServerOne.authorizationEndpoint, {
