@@ -339,7 +339,7 @@ app.get("/callbackreuse", function (req, res) {
   } else {
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes.stringBody,
+        "Unable to fetch access token, server response: " + JSON.parse(tokRes.getBody()),
     });
   }
 });
