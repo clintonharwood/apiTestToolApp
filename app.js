@@ -211,8 +211,8 @@ app.get("/authorizereuse", function(req, res) {
 
   var authorizeUrl = buildUrl(authServerTwo.authorizationEndpoint, {
     response_type: "code",
-    client_id: clientFour.client_id,
-    redirect_uri: clientFour.redirect_uris[0],
+    client_id: client.client_id,
+    redirect_uri: client.redirect_uris[0],
     state: state,
   });
 
@@ -251,7 +251,10 @@ app.get("/callback", function (req, res) {
       encodeClientCredentials(client.client_id, client.client_secret),
   };
 
-  var tokRes = request("POST", authServerTwo.tokenEndpoint, {
+  var authTokenEndpoint = isAuthServerOne
+    ? authServerOne.tokenEndpoint
+    : authServerTwo.tokenEndpoint;
+  var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
   });
@@ -295,13 +298,13 @@ app.get("/callbackreuse", function (req, res) {
   var form_data = qs.stringify({
     grant_type: "authorization_code",
     code: code,
-    redirect_uri: clientFour.redirect_uris[0],
+    redirect_uri: client.redirect_uris[0],
   });
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
     Authorization:
       "Basic " +
-      encodeClientCredentials(clientFour.client_id, clientFour.client_secret),
+      encodeClientCredentials(client.client_id, client.client_secret),
   };
 
   var authTokenEndpoint = isAuthServerOne
