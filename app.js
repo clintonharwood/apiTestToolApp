@@ -319,6 +319,7 @@ app.get("/callbackreuse", function (req, res) {
 
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     // Try to reuse the authorisation code 
+    console.log("Got an access token");
     var tokResTwo = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
@@ -332,13 +333,13 @@ app.get("/callbackreuse", function (req, res) {
     } else {
       res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokResTwo.statusCode,
+        "Unable to fetch access token a second time, server response: " + tokResTwo,
     });
     }
   } else {
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes.statusCode,
+        "Unable to fetch access token, server response: " + tokRes,
     });
   }
 });
