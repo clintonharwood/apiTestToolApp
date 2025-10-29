@@ -297,8 +297,10 @@ app.get("/callbackreuse", function (req, res) {
 
   var form_data = qs.stringify({
     grant_type: "authorization_code",
-    code: code,
+    code: code, 
     redirect_uri: clientFour.redirect_uris[0],
+    client_id: clientFour.client_id,
+    client_secret: lientFour.client_secret
   });
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
