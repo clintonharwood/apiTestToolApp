@@ -295,7 +295,7 @@ app.get("/callbackreuse", function (req, res) {
 
   var code = req.query.code;
   console.log("Requesting access token for code %s", code);
-  res.render("clientindex");
+  res.render("clientindex", { access_token: '', scope: '' });
 });
 
 app.get("/callbacknoncommunity", function (req, res) {
