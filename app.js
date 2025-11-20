@@ -231,20 +231,13 @@ app.get("/authorizereuse", function(req, res) {
 app.get("/authorizeCodeCredsFlow", function(req, res) {
   access_token = null;
   isAuthServerOne = true;
-  state = randomstring.generate();
-
-  var authorizeUrl = buildUrl(authServerOne.authorizationEndpoint, {
-    response_type: "code_credentials",
-    client_id: clientFive.client_id,
-    redirect_uri: clientFive.redirect_uris[0],
-    state: state,
-  });
 
   var form_data = qs.stringify({
     response_type: "code_credentials",
     client_id: clientFive.client_id,
     redirect_uri: clientFive.redirect_uris[0],
   });
+
   var headers = {
     "Auth-Request-Type": "Named-User",
     "Content-Type": "application/x-www-form-urlencoded",
@@ -253,10 +246,7 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
       encodeClientCredentials(clientFive.UN, clientFive.PW),
   };
 
-  var authTokenEndpoint = isAuthServerOne
-    ? authServerOne.tokenEndpoint
-    : authServerTwo.tokenEndpoint;
-  var tokRes = request("POST", authTokenEndpoint, {
+  var tokRes = request("POST", authServerOne.authorizationEndpoint, {
     body: form_data,
     headers: headers,
   });
