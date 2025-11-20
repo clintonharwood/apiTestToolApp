@@ -252,7 +252,6 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
       encodeClientCredentials(clientFive.UN, clientFive.PW),
   };
 
-
   console.log("Requesting access token for code authorizeCodeCredsFlow");
 
   var tokRes = request("POST", authServerThree.authorizationEndpoint, {
@@ -270,7 +269,7 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
   } else {
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes.statusCode,
+        "Unable to fetch access token, server response: " + body,
     });
   }
 });
