@@ -136,6 +136,14 @@ var clientFour = {
   redirect_uris: ["https://clintox.xyz/callbackreuse"],
 };
 
+var clientFive = {
+  client_id: process.env.CLIENT_ID_FIVE,
+  client_secret: process.env.CLIENT_SECRET_FIVE,
+  redirect_uris: ["https://clintox.xyz/callbackcodeexchange"],
+  username: process.env.UN,
+  password: process.env.PW
+};
+
 var state = null;
 
 var access_token = null;
@@ -218,6 +226,87 @@ app.get("/authorizereuse", function(req, res) {
 
   console.log("redirect", authorizeUrl);
   res.redirect(authorizeUrl);
+});
+
+app.get("/authorizeCodeCredsFlow", function(req, res) {
+  access_token = null;
+  isAuthServerOne = true;
+  state = randomstring.generate();
+
+  var authorizeUrl = buildUrl(authServerOne.authorizationEndpoint, {
+    response_type: "code_credentials",
+    client_id: clientFive.client_id,
+    redirect_uri: clientFive.redirect_uris[0],
+    state: state,
+  });
+
+  var form_data = qs.stringify({
+    response_type: "code_credentials",
+    client_id: clientFive.client_id,
+    redirect_uri: clientFive.redirect_uris[0],
+  });
+  var headers = {
+    "Auth-Request-Type": "Named-User",
+    "Content-Type": "application/x-www-form-urlencoded",
+    Authorization:
+      "Basic " +
+      encodeClientCredentials(clientFive.UN, clientFive.PW),
+  };
+
+  var authTokenEndpoint = isAuthServerOne
+    ? authServerOne.tokenEndpoint
+    : authServerTwo.tokenEndpoint;
+  var tokRes = request("POST", authTokenEndpoint, {
+    body: form_data,
+    headers: headers,
+  });
+});
+
+app.get("/callbackcodeexchange", function (req, res) {
+  if (req.query.error) {
+    // it's an error response, act accordingly
+    res.render("error", { error: req.query.error });
+    return;
+  }
+
+  var code = req.query.code;
+
+  var form_data = qs.stringify({
+    grant_type: "authorization_code",
+    code: code,
+    client_id: clientFive.client_id,
+    redirect_uri: client.redirect_uris[0],
+  });
+  var headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    Authorization:
+      "Basic " +
+      encodeClientCredentials(client.client_id, client.client_secret),
+  };
+
+  var authTokenEndpoint = isAuthServerOne
+    ? authServerOne.tokenEndpoint
+    : authServerTwo.tokenEndpoint;
+  var tokRes = request("POST", authTokenEndpoint, {
+    body: form_data,
+    headers: headers,
+  });
+
+  console.log("Requesting access token for code %s", code);
+
+  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+    var body = JSON.parse(tokRes.getBody());
+
+    access_token = body.access_token;
+    console.log("Got access token: %s", access_token);
+
+    res.render("clientindex", { access_token: access_token, scope: scope });
+  } else {
+    res.render("error", {
+      error:
+        "Unable to fetch access token, server response: " + tokRes.statusCode,
+    });
+  }
 });
 
 app.get("/callback", function (req, res) {
