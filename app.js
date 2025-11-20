@@ -269,7 +269,7 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
   } else {
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes.getBody(),
+        "Unable to fetch access token, server response: " + tokRes.body,
     });
   }
 });
