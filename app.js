@@ -252,10 +252,27 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
       encodeClientCredentials(clientFive.UN, clientFive.PW),
   };
 
+
+  console.log("Requesting access token for code authorizeCodeCredsFlow");
+
   var tokRes = request("POST", authServerThree.authorizationEndpoint, {
     body: form_data,
     headers: headers,
   });
+
+  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
+    var body = JSON.parse(tokRes.getBody());
+
+    access_token = body.access_token;
+    console.log("Status code: %s", tokRes.statusCode);
+
+    res.render("clientindex", { access_token: access_token, scope: scope });
+  } else {
+    res.render("error", {
+      error:
+        "Unable to fetch access token, server response: " + tokRes.statusCode,
+    });
+  }
 });
 
 app.get("/callbackcodeexchange", function (req, res) {
