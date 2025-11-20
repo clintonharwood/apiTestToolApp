@@ -111,6 +111,12 @@ var salesforceAuthServerClientCredsFlow = {
     "https://clintoxsupport.my.salesforce.com/services/oauth2/token",
 };
 
+var authServerThree = {
+  authorizationEndpoint:
+    "https://api.clintox.xyz/emp/services/oauth2/authorize",
+  tokenEndpoint: "https://api.clintox.xyz/emp/services/oauth2/token",
+};
+
 // client information
 var client = {
   client_id: process.env.CLIENT_ID,
@@ -246,7 +252,7 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
       encodeClientCredentials(clientFive.UN, clientFive.PW),
   };
 
-  var tokRes = request("POST", authServerOne.authorizationEndpoint, {
+  var tokRes = request("POST", authServerThree.authorizationEndpoint, {
     body: form_data,
     headers: headers,
   });
@@ -277,7 +283,7 @@ app.get("/callbackcodeexchange", function (req, res) {
   var authTokenEndpoint = isAuthServerOne
     ? authServerOne.tokenEndpoint
     : authServerTwo.tokenEndpoint;
-  var tokRes = request("POST", authTokenEndpoint, {
+  var tokRes = request("POST", authServerThree.tokenEndpoint, {
     body: form_data,
     headers: headers,
   });
