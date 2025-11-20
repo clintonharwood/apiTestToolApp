@@ -2,7 +2,6 @@ var express = require("express");
 var logger = require("morgan");
 var path = require("path");
 var timeout = require("connect-timeout");
-var request = require("sync-request");
 var url = require("url");
 var qs = require("qs");
 var querystring = require("querystring");
@@ -11,8 +10,8 @@ var randomstring = require("randomstring");
 var __ = require("underscore");
 __.string = require("underscore.string");
 var cors = require("cors");
-//var requestModule = require('request');
 var helmet = require("helmet");
+const axios = require('axios');
 
 const salesforceDocs = [
   "https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_anonymous_block.htm",
@@ -234,9 +233,8 @@ app.get("/authorizereuse", function(req, res) {
   res.redirect(authorizeUrl);
 });
 
-app.get("/authorizeCodeCredsFlow", function(req, res) {
+app.get("/authorizeCodeCredsFlow", async function(req, res) {
   access_token = null;
-  isAuthServerOne = true;
 
   var form_data = qs.stringify({
     response_type: "code_credentials",
@@ -254,22 +252,25 @@ app.get("/authorizeCodeCredsFlow", function(req, res) {
 
   console.log("Requesting access token for code authorizeCodeCredsFlow");
 
-  var tokRes = request("POST", authServerThree.authorizationEndpoint, {
-    body: form_data,
+  const options = {
+    method: 'POST',
     headers: headers,
-  });
+    data: form_data
+  };
 
-  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
-    var body = JSON.parse(tokRes.getBody());
+  const tokRes = await axios(options);
+
+  if (tokRes.status >= 200 && tokRes.status < 300) {
+    var body = JSON.parse(tokRes.data);
 
     access_token = body.access_token;
-    console.log("Status code: %s", tokRes.statusCode);
+    console.log("Status code: %s", tokRes.status);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
   } else {
     res.render("error", {
       error:
-        "Unable to authorize: " + tokRes.body,
+        "Unable to authorize: " + body,
     });
   }
 });
