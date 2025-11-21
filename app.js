@@ -260,25 +260,27 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     url
   };
 
+  let reqBody = null;
+
   try {
     const tokRes = await axios(options);
     if (tokRes.status >= 200 && tokRes.status < 300) {
-    let body = JSON.parse(tokRes.data);
+    reqBody = JSON.parse(tokRes.data);
 
-    access_token = body.access_token;
+    access_token = reqBody.access_token;
     console.log("Status code: %s", tokRes.status);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
     } else {
       res.render("error", {
         error:
-          "Unable to authorize: " + body,
+          "Unable to authorize: " + reqBody,
       });
     }
   } catch (err) {
     res.render("error", {
       error:
-        "Unable to authorize: " + body,
+        "Unable to authorize: " + reqBody,
     });
   }
 });
