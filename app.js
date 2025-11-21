@@ -294,9 +294,10 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
       console.log('Error', error.message);
     }
     console.log(error.config);
+    let errorMessage = error.response != null ? error.response.data : error.message;
     res.render("error", {
       error:
-        "Unable to authorize: " + error.response.data != null ? error.response.data : error.message
+        "Unable to authorize: " + errorMessage
     });
   }
 });
