@@ -5,7 +5,6 @@ var timeout = require("connect-timeout");
 var url = require("url");
 var qs = require("qs");
 var querystring = require("querystring");
-var cons = require("consolidate");
 var randomstring = require("randomstring");
 var __ = require("underscore");
 __.string = require("underscore.string");
@@ -241,6 +240,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     client_id: clientFive.client_id,
     redirect_uri: clientFive.redirect_uris[0],
   });
+  console.log(form_data);
 
   var headers = {
     "Auth-Request-Type": "Named-User",
@@ -249,6 +249,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
       "Basic " +
       encodeClientCredentials(clientFive.UN, clientFive.PW),
   };
+  console.log(headers);
 
   console.log("Requesting access token for code authorizeCodeCredsFlow");
 
