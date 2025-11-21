@@ -252,7 +252,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
 
   console.log("Requesting access token for code authorizeCodeCredsFlow");
 
-  const url = authServerOne.authorizationEndpoint;
+  const url = authServerThree.authorizationEndpoint;
   const options = {
     method: 'POST',
     headers: headers,
