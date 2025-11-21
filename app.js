@@ -278,6 +278,8 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
       });
     }
   } catch (err) {
+    console.log(tokRes.status);
+    console.log(tokRes.data)
     res.render("error", {
       error:
         "Unable to authorize: " + reqBody,
