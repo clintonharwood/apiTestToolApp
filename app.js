@@ -247,7 +247,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     "Content-Type": "application/x-www-form-urlencoded",
     "Authorization":
       "Basic " +
-      encodeClientCredentials(clientFive.UN, clientFive.PW),
+      encodeClientCredentials(clientFive.username, clientFive.password)
   };
   console.log(headers);
 
