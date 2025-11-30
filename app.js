@@ -322,7 +322,7 @@ app.get("/callbackcodeexchange", function (req, res) {
     "Content-Type": "application/x-www-form-urlencoded",
     Authorization:
       "Basic " +
-      encodeClientCredentials(client.client_id, client.client_secret),
+      encodeClientCredentailsNonURLEncoded(client.client_id, client.client_secret),
   };
 
   var tokRes = request("POST", authServerThree.tokenEndpoint, {
@@ -875,6 +875,10 @@ var encodeClientCredentials = function (clientId, clientSecret) {
   return Buffer.from(
     querystring.escape(clientId) + ":" + querystring.escape(clientSecret)
   ).toString("base64");
+};
+
+var encodeClientCredentailsNonURLEncoded = function(clientId, clientSecret) {
+  return Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 };
 
 app.listen(process.env.PORT || 3000, function () {
