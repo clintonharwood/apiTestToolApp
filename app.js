@@ -316,7 +316,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
     grant_type: "authorization_code",
     code: code,
     client_id: clientFive.client_id,
-    redirect_uri: client.redirect_uris[0],
+    redirect_uri: clientFive.redirect_uris[0],
   });
   
   var headers = {
