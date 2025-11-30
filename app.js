@@ -247,7 +247,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     "Auth-Request-Type": "Named-User",
     "Authorization":
       "Basic " +
-      encodeClientCredentials(clientFive.username, clientFive.password)
+      encodeClientCredentailsNonURLEncoded(clientFive.username, clientFive.password)
   };
   console.log(headers);
 
@@ -322,7 +322,7 @@ app.get("/callbackcodeexchange", function (req, res) {
     "Content-Type": "application/x-www-form-urlencoded",
     Authorization:
       "Basic " +
-      encodeClientCredentailsNonURLEncoded(client.client_id, client.client_secret),
+      encodeClientCredentials(client.client_id, client.client_secret),
   };
 
   var tokRes = request("POST", authServerThree.tokenEndpoint, {
@@ -870,7 +870,7 @@ var buildUrl = function (base, options, hash) {
 
   return url.format(newUrl);
 };
-
+s
 var encodeClientCredentials = function (clientId, clientSecret) {
   return Buffer.from(
     querystring.escape(clientId) + ":" + querystring.escape(clientSecret)
