@@ -303,7 +303,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
   }
 });
 
-app.get("/callbackcodeexchange", function (req, res) {
+app.get("/callbackcodeexchange", async function (req, res) {
   if (req.query.error) {
     // it's an error response, act accordingly
     res.render("error", { error: req.query.error });
@@ -318,6 +318,7 @@ app.get("/callbackcodeexchange", function (req, res) {
     client_id: clientFive.client_id,
     redirect_uri: client.redirect_uris[0],
   });
+  
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
     Authorization:
@@ -325,26 +326,54 @@ app.get("/callbackcodeexchange", function (req, res) {
       encodeClientCredentials(client.client_id, client.client_secret),
   };
 
-  var tokRes = request("POST", authServerThree.tokenEndpoint, {
-    body: form_data,
+  const url = authServerThree.tokenEndpoint;
+  const options = {
+    method: 'POST',
     headers: headers,
-  });
+    data: form_data,
+    url
+  };
 
-  console.log("Requesting access token for code %s", code);
+  let reqBody = null;
 
-  if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
-    var body = JSON.parse(tokRes.getBody());
+  try {
+    const tokRes = await axios(options);
+    if (tokRes.status >= 200 && tokRes.status < 300) {
+    reqBody = JSON.parse(tokRes.data);
 
-    access_token = body.access_token;
-    console.log("Got access token: %s", access_token);
+    access_token = reqBody.access_token;
+    console.log("Status code: %s", tokRes.status);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
-  } else {
+    } else {
+      res.render("error", {
+        error:
+          "Unable to authorize: " + reqBody,
+      });
+    }
+  } catch (error) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log('Error', error.message);
+    }
+    console.log(error.config);
+    let errorMessage = error.response ? error.response.data : error.message;
     res.render("error", {
       error:
-        "Unable to fetch access token, server response: " + tokRes.statusCode,
+        "Unable to authorize: " + JSON.stringify(errorMessage)
     });
-  }
+    };
 });
 
 app.get("/callback", function (req, res) {
