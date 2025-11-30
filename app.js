@@ -870,7 +870,7 @@ var buildUrl = function (base, options, hash) {
 
   return url.format(newUrl);
 };
-s
+
 var encodeClientCredentials = function (clientId, clientSecret) {
   return Buffer.from(
     querystring.escape(clientId) + ":" + querystring.escape(clientSecret)
