@@ -271,15 +271,8 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     const { access_token } = tokRes.data;
 
     console.log("Success! Status code: %s", tokRes.status);
-    console.log("About to render...");
-    try {
-        res.render("clientindex", { access_token: access_token, scope: null});
-    } catch (renderError) {
-        console.error("!!! RENDER CRASHED !!!");
-        console.error(renderError);
-        return res.status(500).send("Error rendering view: " + renderError.message);
-    }
-
+    console.log("Access Token: " + access_token);
+    console.log("res: " + res);
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
@@ -327,15 +320,8 @@ app.get("/callbackcodeexchange", async function (req, res) {
 
     // Extract the token
     const access_token = reqBody.access_token;
-    console.log("About to render...");
-    try {
-          res.render("clientindex", { access_token: access_token, scope: null});
-    } catch (renderError) {
-        console.error("!!! RENDER CRASHED !!!");
-        console.error(renderError);
-        return res.status(500).send("Error rendering view: " + renderError.message);
-    }
-
+    console.log("Success! Status code: %s", tokRes.status);
+    console.log("Access Token: " + access_token);
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
