@@ -272,7 +272,13 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
 
     console.log("Success! Status code: %s", tokRes.status);
     console.log("About to render...");
-    res.render("clientindex", { access_token, scope: null });
+    try {
+        res.render("clientindex", { access_token: access_token, scope: null});
+    } catch (renderError) {
+        console.error("!!! RENDER CRASHED !!!");
+        console.error(renderError);
+        return res.status(500).send("Error rendering view: " + renderError.message);
+    }
 
   } catch (error) {
     // 5. Centralized Error Handling
