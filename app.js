@@ -338,6 +338,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
 
   try {
     const tokRes = await axios(options);
+    console.log("Status code: %s", tokRes.status);
     if (tokRes.status >= 200 && tokRes.status < 300) {
     reqBody = JSON.parse(tokRes.data);
 
