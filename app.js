@@ -266,12 +266,12 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
   try {
     const tokRes = await axios(options);
     if (tokRes.status >= 200 && tokRes.status < 300) {
-    reqBody = JSON.parse(tokRes.data);
+    reqBody = tokRes.data;
 
     access_token = reqBody.access_token;
     console.log("Status code: %s", tokRes.status);
 
-    res.render("clientindex", { access_token: access_token, scope: scope });
+    res.render("clientindex", { access_token: access_token});
     } else {
       res.render("error", {
         error:
