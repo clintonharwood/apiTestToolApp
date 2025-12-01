@@ -4,7 +4,6 @@ var path = require("path");
 var timeout = require("connect-timeout");
 var url = require("url");
 var qs = require("qs");
-var querystring = require("querystring");
 var randomstring = require("randomstring");
 var __ = require("underscore");
 __.string = require("underscore.string");
@@ -271,7 +270,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     const { access_token } = tokRes.data;
 
     console.log("Success! Status code: %s", tokRes.status);
-    console.log("Access Token: " + access_token);
+    console.log("Token received successfully");
     return res.render("clientindex", { access_token: 'redacted' });
   } catch (error) {
     // 5. Centralized Error Handling
@@ -367,13 +366,13 @@ app.get("/callback", function (req, res) {
     headers: headers,
   });
 
-  console.log("Requesting access token for code %s", code);
+  console.log("Requesting access token for code");
 
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     var body = JSON.parse(tokRes.getBody());
 
     access_token = body.access_token;
-    console.log("Got access token: %s", access_token);
+    console.log("Token received successfully");
 
     res.render("clientindex", { access_token: access_token, scope: scope });
   } else {
@@ -402,7 +401,7 @@ app.get("/callbackreuse", function (req, res) {
   }
 
   var code = req.query.code;
-  console.log("Requesting access token for code %s", code);
+  console.log("Requesting access token for code");
   res.render("clientindex", { access_token: '', scope: '' });
 });
 
@@ -443,13 +442,13 @@ app.get("/callbacknoncommunity", function (req, res) {
     headers: headers,
   });
 
-  console.log("Requesting access token for code %s", code);
+  console.log("Requesting access token for code");
 
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     var body = JSON.parse(tokRes.getBody());
 
     access_token = body.access_token;
-    console.log("Got access token: %s", access_token);
+    console.log("Token received successfully");
 
     if (isCreateAccount) {
       var salesforceApiheaders = {
@@ -657,7 +656,7 @@ app.get("/publishPlatfromEvent", function (req, res) {
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     var body = JSON.parse(tokRes.getBody());
 
-    console.log("Got access token: %s", body.access_token);
+    console.log("Token received successfully");
     // Got a valid token now pulbish a Platform Event
     var platformEventEndpointUrl =
       "https://clintoxsupport.my.salesforce.com/services/data/v63.0/sobjects/Clintox_Test_Event__e/";
@@ -735,7 +734,7 @@ app.get("/sendFileMIAW", function (req, res) {
   if (tokRes.statusCode >= 200 && tokRes.statusCode < 300) {
     var body = JSON.parse(tokRes.getBody());
     accessToken = body.accessToken;
-    console.log("Got access token: " + accessToken);
+    console.log("Token received successfully");
 
     //create conversation
     var coHeaders = {
@@ -854,12 +853,8 @@ var buildUrl = function (base, options, hash) {
 
 var encodeClientCredentials = function (clientId, clientSecret) {
   return Buffer.from(
-    querystring.escape(clientId) + ":" + querystring.escape(clientSecret)
+    encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret)
   ).toString("base64");
-};
-
-var encodeClientCredentailsNonURLEncoded = function(clientId, clientSecret) {
-  return Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 };
 
 // Helper function to keep your route clean
