@@ -233,75 +233,52 @@ app.get("/authorizereuse", function(req, res) {
 });
 
 app.get("/authorizeCodeCredsFlow", async function(req, res) {
-  access_token = null;
-
-  var form_data = qs.stringify({
-    response_type: "code_credentials",
-    client_id: clientFive.client_id,
-    redirect_uri: clientFive.redirect_uris[0],
-  });
-  console.log(form_data);
-
-  var headers = {
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Auth-Request-Type": "Named-User",
-    "Authorization":
-      "Basic " +
-      encodeClientCredentailsNonURLEncoded(clientFive.username, clientFive.password)
-  };
-  console.log(headers);
-
-  console.log("Requesting access token for code authorizeCodeCredsFlow");
-
-  const url = authServerThree.authorizationEndpoint;
-  const options = {
-    method: 'POST',
-    headers: headers,
-    data: form_data,
-    url
-  };
-
-  let reqBody = null;
-
   try {
-    const tokRes = await axios(options);
-    if (tokRes.status >= 200 && tokRes.status < 300) {
-    reqBody = tokRes.data;
-
-    access_token = reqBody.access_token;
-    console.log("Status code: %s", tokRes.status);
-
-    res.render("clientindex", { access_token: access_token});
-    } else {
-      res.render("error", {
-        error:
-          "Unable to authorize: " + reqBody,
-      });
-    }
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
-    }
-    console.log(error.config);
-    let errorMessage = error.response ? error.response.data : error.message;
-    res.render("error", {
-      error:
-        "Unable to authorize: " + JSON.stringify(errorMessage)
+    // 1. Prepare the Body
+    // Using qs.stringify is standard for 'application/x-www-form-urlencoded'
+    const requestBody = qs.stringify({
+      response_type: "code_credentials",
+      client_id: clientFive.client_id,
+      redirect_uri: clientFive.redirect_uris[0],
     });
+
+    // 2. Configure Axios Options
+    const options = {
+      method: 'POST',
+      url: authServerThree.authorizationEndpoint,
+      data: requestBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Auth-Request-Type": "Named-User", 
+      },
+      // BEST PRACTICE: Use the Axios 'auth' helper.
+      // It handles the Base64 encoding of username:password automatically 
+      // and correctly (no double-encoding issues).
+      auth: {
+        username: clientFive.username,
+        password: clientFive.password
+      }
+    };
+
+    console.log("Requesting access token for authorizeCodeCredsFlow...");
+
+    // 3. Make the Request
+    const tokRes = await axios(options);
+
+    // 4. Handle Success
+    // Axios throws an error for non-2xx status by default, 
+    // so we don't need manual status checks here.
+    const { access_token } = tokRes.data;
+
+    console.log("Success! Status code: %s", tokRes.status);
+    res.render("clientindex", { access_token });
+
+  } catch (error) {
+    // 5. Centralized Error Handling
+    handleAxiosError(error, res);
   }
 });
+
 
 app.get("/callbackcodeexchange", async function (req, res) {
   if (req.query.error) {
@@ -343,38 +320,12 @@ app.get("/callbackcodeexchange", async function (req, res) {
 
     // Extract the token
     const access_token = reqBody.access_token;
-    
-    // CHECK: 'scope' was undefined in your snippet. 
-    // Usually it comes back in the response body, or you have it saved globally.
-    // I am pulling it from the response if available, or defaulting to null.
-    const scope = reqBody.scope || null;
-
-    console.log("352 Status code: %s", tokRes.status);
-    console.log("353 Res body: %s", reqBody);
 
     res.render("clientindex", { access_token: access_token});
 
   } catch (error) {
-    // Robust Error Handling
-    let errorDetail = "Unknown Error";
-    
-    if (error.response) {
-      // The server responded with a status code outside the 2xx range
-      console.log("Error Status:", error.response.status);
-      console.log("Error Data:", error.response.data);
-      // Try to get a meaningful error message from the OAuth provider
-      errorDetail = JSON.stringify(error.response.data);
-    } else if (error.request) {
-      console.log("No response received");
-      errorDetail = "No response from authorization server";
-    } else {
-      console.log('Error Message:', error.message);
-      errorDetail = error.message;
-    }
-
-    res.render("error", {
-      error: "Unable to authorize: " + errorDetail
-    });
+    // 5. Centralized Error Handling
+    handleAxiosError(error, res);
   }
 });
 
@@ -911,6 +862,30 @@ var encodeClientCredentials = function (clientId, clientSecret) {
 var encodeClientCredentailsNonURLEncoded = function(clientId, clientSecret) {
   return Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 };
+
+// Helper function to keep your route clean
+function handleAxiosError(error, res) {
+  let errorMessage;
+
+  if (error.response) {
+    // Server responded with a status other than 2xx
+    console.error("Status:", error.response.status);
+    console.error("Data:", error.response.data);
+    errorMessage = JSON.stringify(error.response.data);
+  } else if (error.request) {
+    // Request was made but no response received
+    console.error("No response received:", error.request);
+    errorMessage = "No response from server";
+  } else {
+    // Setup error
+    console.error("Error setting up request:", error.message);
+    errorMessage = error.message;
+  }
+
+  res.render("error", {
+    error: "Unable to authorize: " + errorMessage
+  });
+}
 
 app.listen(process.env.PORT || 3000, function () {
   console.log("App started on port 3000");
