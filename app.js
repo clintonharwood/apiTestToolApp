@@ -350,6 +350,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
     const scope = reqBody.scope || null;
 
     console.log("352 Status code: %s", tokRes.status);
+    console.log("353 Res body: %s", reqBody);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
 
