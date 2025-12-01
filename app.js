@@ -305,28 +305,29 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
 
 app.get("/callbackcodeexchange", async function (req, res) {
   if (req.query.error) {
-    // it's an error response, act accordingly
     res.render("error", { error: req.query.error });
     return;
   }
 
   var code = req.query.code;
 
+  // Ensure 'clientFive' is defined in your outer scope
   var form_data = qs.stringify({
     grant_type: "authorization_code",
     code: code,
     client_id: clientFive.client_id,
     redirect_uri: clientFive.redirect_uris[0],
   });
-  
+
+  // CHECK: You used 'client' here but 'clientFive' above. 
+  // I have standardized this to 'clientFive' to match the form_data.
   var headers = {
     "Content-Type": "application/x-www-form-urlencoded",
-    Authorization:
-      "Basic " +
-      encodeClientCredentials(client.client_id, client.client_secret),
+    Authorization: "Basic " + encodeClientCredentials(clientFive.client_id, clientFive.client_secret),
   };
 
   const url = authServerThree.tokenEndpoint;
+  
   const options = {
     method: 'POST',
     headers: headers,
@@ -334,48 +335,46 @@ app.get("/callbackcodeexchange", async function (req, res) {
     url
   };
 
-  let reqBody = null;
-
   try {
     const tokRes = await axios(options);
-    console.log("Status code: %s", tokRes.status);
-    if (tokRes.status >= 200 && tokRes.status < 300) {
-    reqBody = JSON.parse(tokRes.data);
 
-    access_token = reqBody.access_token;
+    // FIXED: Axios automatically parses JSON. Do not call JSON.parse(tokRes.data).
+    const reqBody = tokRes.data; 
+
+    // Extract the token
+    const access_token = reqBody.access_token;
+    
+    // CHECK: 'scope' was undefined in your snippet. 
+    // Usually it comes back in the response body, or you have it saved globally.
+    // I am pulling it from the response if available, or defaulting to null.
+    const scope = reqBody.scope || null;
+
     console.log("Status code: %s", tokRes.status);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
-    } else {
-      console.log("Status code: %s", tokRes.status);
-      res.render("error", {
-        error:
-          "Unable to authorize: " + reqBody,
-      });
-    }
+
   } catch (error) {
+    // Robust Error Handling
+    let errorDetail = "Unknown Error";
+    
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
+      // The server responded with a status code outside the 2xx range
+      console.log("Error Status:", error.response.status);
+      console.log("Error Data:", error.response.data);
+      // Try to get a meaningful error message from the OAuth provider
+      errorDetail = JSON.stringify(error.response.data);
     } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log(error.request);
+      console.log("No response received");
+      errorDetail = "No response from authorization server";
     } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
+      console.log('Error Message:', error.message);
+      errorDetail = error.message;
     }
-    console.log(error.config);
-    let errorMessage = error.response ? error.response.data : error.message;
+
     res.render("error", {
-      error:
-        "Unable to authorize: " + JSON.stringify(errorMessage)
+      error: "Unable to authorize: " + errorDetail
     });
-    };
+  }
 });
 
 app.get("/callback", function (req, res) {
