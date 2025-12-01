@@ -273,6 +273,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     console.log("Success! Status code: %s", tokRes.status);
     console.log("Access Token: " + access_token);
     console.log("res: " + res);
+    return res.render("clientindex", { access_token });
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
@@ -322,6 +323,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
     const access_token = reqBody.access_token;
     console.log("Success! Status code: %s", tokRes.status);
     console.log("Access Token: " + access_token);
+    return res.render("clientindex", { access_token });
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
