@@ -346,6 +346,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
 
     res.render("clientindex", { access_token: access_token, scope: scope });
     } else {
+      console.log("Status code: %s", tokRes.status);
       res.render("error", {
         error:
           "Unable to authorize: " + reqBody,
