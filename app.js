@@ -272,7 +272,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
 
     console.log("Success! Status code: %s", tokRes.status);
     console.log("Access Token: " + access_token);
-    return res.render("clientindex", { access_token: "<redacted>" });
+    return res.render("clientindex", { access_token: 'redacted' });
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
