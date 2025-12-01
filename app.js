@@ -271,6 +271,7 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     const { access_token } = tokRes.data;
 
     console.log("Success! Status code: %s", tokRes.status);
+    console.log("About to render...");
     res.render("clientindex", { access_token, scope: null });
 
   } catch (error) {
@@ -320,7 +321,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
 
     // Extract the token
     const access_token = reqBody.access_token;
-
+    console.log("About to render...");
     res.render("clientindex", { access_token: access_token, scope: null});
 
   } catch (error) {
