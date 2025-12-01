@@ -349,7 +349,7 @@ app.get("/callbackcodeexchange", async function (req, res) {
     // I am pulling it from the response if available, or defaulting to null.
     const scope = reqBody.scope || null;
 
-    console.log("Status code: %s", tokRes.status);
+    console.log("352 Status code: %s", tokRes.status);
 
     res.render("clientindex", { access_token: access_token, scope: scope });
 
