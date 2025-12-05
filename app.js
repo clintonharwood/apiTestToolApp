@@ -284,7 +284,6 @@ app.get("/revokeOAuthToken", async function(req, res) {
     // 2. Configure Axios Options
     const options = {
       method: 'POST',
-      //url: 'https://clintoxsupport.my.salesforce.com/services/oauth2/revoke',
       url: 'https://api.clintox.xyz/emp/services/oauth2/revoke',
       data: requestBody,
       headers: {
@@ -292,12 +291,13 @@ app.get("/revokeOAuthToken", async function(req, res) {
       }
     };
 
-    console.log("Request body: " + requestBody)
     console.log("Revoking access token ...");
-    console.log("Is access token empty: " + access_token);
 
     // 3. Make the Request
     const tokRes = await axios(options);
+
+    // token is revoked, clear the token
+    access_token = null;
 
     console.log("Status code: %s", tokRes.status);
     return res.render("clientindex", { access_token: tokRes.status });
