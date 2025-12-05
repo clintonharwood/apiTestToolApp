@@ -292,6 +292,7 @@ app.get("/revokeOAuthToken", async function(req, res) {
       }
     };
 
+    console.log("Request body: " + requestBody)
     console.log("Revoking access token ...");
     console.log("Is access token empty: " + access_token);
 
