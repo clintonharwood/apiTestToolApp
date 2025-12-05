@@ -37,11 +37,8 @@ const salesforceDocs = [
 
 var app = express();
 app.use(cors());
-
 app.use(logger("short"));
-
 app.use(helmet({ xFrameOptions: { action: "sameorigin" } }));
-
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -148,9 +145,7 @@ var clientFive = {
 };
 
 var state = null;
-
 var access_token = null;
-var scope = null;
 var isAuthServerOne = false;
 var isCreateAccount = false;
 var isDownloadReport = false;
@@ -267,11 +262,43 @@ app.get("/authorizeCodeCredsFlow", async function(req, res) {
     // 4. Handle Success
     // Axios throws an error for non-2xx status by default, 
     // so we don't need manual status checks here.
-    const { access_token } = tokRes.data;
+    access_token = tokRes.data;
 
     console.log("Success! Status code: %s", tokRes.status);
     console.log("Token received successfully");
     return res.render("clientindex", { access_token: 'redacted' });
+  } catch (error) {
+    // 5. Centralized Error Handling
+    handleAxiosError(error, res);
+  }
+});
+
+app.get("/revokeOAuthToken", async function(req, res) {
+  try {
+    // 1. Prepare the Body
+    // Using qs.stringify is standard for 'application/x-www-form-urlencoded'
+    const requestBody = qs.stringify({
+      token: access_token
+    });
+
+    // 2. Configure Axios Options
+    const options = {
+      method: 'POST',
+      url: 'https://api.clintox.xyz/emp/services/oauth2/revoke',
+      data: requestBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Host": "https://api.clintox.xyz"
+      }
+    };
+
+    console.log("Revoking access token ...");
+
+    // 3. Make the Request
+    const tokRes = await axios(options);
+
+    console.log("Status code: %s", tokRes.status);
+    return res.render("clientindex", { access_token: tokRes.status });
   } catch (error) {
     // 5. Centralized Error Handling
     handleAxiosError(error, res);
@@ -361,6 +388,7 @@ app.get("/callback", function (req, res) {
   var authTokenEndpoint = isAuthServerOne
     ? authServerOne.tokenEndpoint
     : authServerTwo.tokenEndpoint;
+    // TODO replace with axios
   var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
@@ -374,7 +402,7 @@ app.get("/callback", function (req, res) {
     access_token = body.access_token;
     console.log("Token received successfully");
 
-    res.render("clientindex", { access_token: access_token, scope: scope });
+    res.render("clientindex", { access_token: access_token });
   } else {
     res.render("error", {
       error:
@@ -402,7 +430,7 @@ app.get("/callbackreuse", function (req, res) {
 
   var code = req.query.code;
   console.log("Requesting access token for code");
-  res.render("clientindex", { access_token: '', scope: '' });
+  res.render("clientindex", { access_token: '' });
 });
 
 app.get("/callbacknoncommunity", function (req, res) {
@@ -437,6 +465,7 @@ app.get("/callbacknoncommunity", function (req, res) {
   };
 
   var authTokenEndpoint = salesforceAuthServer.tokenEndpoint;
+  // TODO replace with axios
   var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
@@ -456,6 +485,7 @@ app.get("/callbacknoncommunity", function (req, res) {
         Authorization: "Bearer " + access_token,
       };
 
+      // TODO replace with axios
       var apiCall = request(
         "POST",
         "https://clintoxsupport.my.salesforce.com/services/data/v60.0/sobjects/Account",
@@ -474,6 +504,7 @@ app.get("/callbacknoncommunity", function (req, res) {
         Authorization: "Bearer " + access_token,
       };
 
+      // TODO replace with axios
       var apiCall = request(
         "GET",
         "https://clintoxsupport.my.salesforce.com/services/data/v60.0/analytics/reports/00O5K000000XecLUAS",
@@ -513,6 +544,7 @@ app.get("/authorizeThree", function (req, res) {
   };
 
   var authTokenEndpoint = salesforceAuthServerClientCredsFlow.tokenEndpoint;
+  // TODO replace with axios
   var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
@@ -542,7 +574,7 @@ app.get("/api", function (req, res) {
 });
 
 app.get("/auth", function (req, res) {
-  res.render("clientindex", { access_token: access_token, scope: scope });
+  res.render("clientindex", { access_token: access_token });
 });
 
 app.get("/cmoney", function (req, res) {
@@ -646,6 +678,7 @@ app.get("/publishPlatfromEvent", function (req, res) {
   };
 
   var authTokenEndpoint = salesforceAuthServerClientCredsFlow.tokenEndpoint;
+  // TODO replace with axios
   var tokRes = request("POST", authTokenEndpoint, {
     body: form_data,
     headers: headers,
@@ -668,6 +701,7 @@ app.get("/publishPlatfromEvent", function (req, res) {
       Authorization: "Bearer " + body.access_token,
     };
 
+    // TODO replace with axios
     var eventRes = request("POST", platformEventEndpointUrl, {
       json: pe_form_data,
       headers: peHeaders,
@@ -724,6 +758,7 @@ app.get("/sendFileMIAW", function (req, res) {
     platform: "Web",
   };
 
+  // TODO replace with axios
   var tokRes = request("POST", authEndpoint, {
     json: form_data,
     headers: headers,
@@ -747,6 +782,7 @@ app.get("/sendFileMIAW", function (req, res) {
       esDeveloperName: "Service_For_Web_Custom_Client",
     };
 
+    // TODO replace with axios
     var eventRes = request("POST", convoEndpoint, {
       json: conForm_data,
       headers: coHeaders,
@@ -781,6 +817,7 @@ app.get("/sendFileMIAW", function (req, res) {
         Authorization: accessToken,
       };
 
+      // TODO replace with axios
       var sendRes = request("POST", sendFileEndpoint, {
         body: stringBody,
         headers: sHeaders,
