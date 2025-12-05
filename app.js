@@ -278,7 +278,7 @@ app.get("/revokeOAuthToken", async function(req, res) {
     // 1. Prepare the Body
     // Using qs.stringify is standard for 'application/x-www-form-urlencoded'
     const requestBody = qs.stringify({
-      token: access_token
+      token: access_token.access_token
     });
 
     // 2. Configure Axios Options
