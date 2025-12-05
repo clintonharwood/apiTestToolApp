@@ -297,7 +297,7 @@ app.get("/revokeOAuthToken", async function(req, res) {
     const tokRes = await axios(options);
 
     // token is revoked, clear the token
-    access_token = null;
+    //access_token = null;
 
     console.log("Status code: %s", tokRes.status);
     return res.render("clientindex", { access_token: tokRes.status });
