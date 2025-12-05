@@ -287,8 +287,7 @@ app.get("/revokeOAuthToken", async function(req, res) {
       url: 'https://api.clintox.xyz/emp/services/oauth2/revoke',
       data: requestBody,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Host": "https://api.clintox.xyz"
+        "Content-Type": "application/x-www-form-urlencoded"
       }
     };
 
