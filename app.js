@@ -7,8 +7,8 @@ const helmet = require("helmet");
 const session = require("express-session");
 
 // Configuration
-const cspConfig = require("./config/csp");
-const routes = require("./routes/index");
+const cspConfig = require("./src/config/csp");
+const routes = require("./src/routes/index");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
