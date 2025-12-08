@@ -53,6 +53,9 @@ exports.callback = async (req, res) => {
     if (req.session.action === 'createAccount') {
        const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
        return res.render("createaccountui", { result: JSON.stringify(acc) });
+    } else if (req.session.action === 'report') {
+      const acc = await sfService.downloadReport(tokenData.access_token, { Name: "Clintox API Test Tool" });
+       return res.render("createaccountui", { result: JSON.stringify(acc) });
     }
     
     res.render("clientindex", { access_token: tokenData.access_token });
