@@ -26,7 +26,7 @@ exports.startAuth = (req, res) => {
   }
 
   const url = buildUrl(endpoint, {
-    response_type: "code",
+    response_type: type === 'three' ? "client_credentials" : "code",
     client_id: client.client_id,
     redirect_uri: client.redirect_uris[0],
     state: state,
