@@ -28,7 +28,7 @@ router.get("/authorizereuse", (req, res) => { req.params.type = 'reuse'; authCon
 // TODO impl
 router.get("/authorizeCodeCredsFlow", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
 router.get("/revokeOAuthToken", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
-router.get("/revokeThree", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
+router.get("/revokeThree", (req, res) => { req.params.type = 'three'; authController.startAuth(req, res); });
 
 // Callbacks
 router.get("/callback", authController.callback);

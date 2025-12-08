@@ -5,7 +5,7 @@ const sfService = require("../services/salesforceService");
 
 // Start Auth Flow
 exports.startAuth = (req, res) => {
-  const type = req.params.type; // 'one', 'two', 'reuse'
+  const type = req.params.type; // 'one', 'two', 'three', 'reuse'
   const state = randomstring.generate();
   req.session.oauthState = state; // Safe storage
   
@@ -15,9 +15,12 @@ exports.startAuth = (req, res) => {
   if (type === 'two') {
     endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
     req.session.authServer = 'serverTwo';
+  } else if (type === 'three') {
+    endpoint = authConfig.endpoints.authServerThree.authorizationEndpoint;
+    client = authConfig.clients.four;
   } else if (type === 'reuse') {
     endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
-    client = authConfig.clients.four;
+    client = authConfig.clients.three;
   } else {
     req.session.authServer = 'serverOne';
   }
@@ -54,8 +57,9 @@ exports.callback = async (req, res) => {
        const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
        return res.render("createaccountui", { result: JSON.stringify(acc) });
     } else if (req.session.action === 'report') {
-      const acc = await sfService.downloadReport(tokenData.access_token, { Name: "Clintox API Test Tool" });
-       return res.render("createaccountui", { result: JSON.stringify(acc) });
+       const report = await sfService.downloadReport(tokenData.access_token);
+       res.attachment("report.xlsx");
+       return res.send(report);
     }
     
     res.render("clientindex", { access_token: tokenData.access_token });
