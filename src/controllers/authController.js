@@ -9,14 +9,14 @@ exports.startAuth = (req, res) => {
   const state = randomstring.generate();
   req.session.oauthState = state; // Safe storage
   
-  let endpoint = authConfig.endpoints.serverOne.auth;
+  let endpoint = authConfig.endpoints.authServerOne.authorizationEndpoint;
   let client = authConfig.clients.one;
 
   if (type === 'two') {
-    endpoint = authConfig.endpoints.serverTwo.auth;
+    endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
     req.session.authServer = 'serverTwo';
   } else if (type === 'reuse') {
-    endpoint = authConfig.endpoints.serverTwo.auth;
+    endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
     client = authConfig.clients.four;
   } else {
     req.session.authServer = 'serverOne';
@@ -24,8 +24,8 @@ exports.startAuth = (req, res) => {
 
   const url = buildUrl(endpoint, {
     response_type: "code",
-    client_id: client.id,
-    redirect_uri: client.redirectUri,
+    client_id: client.client_id,
+    redirect_uri: client.redirect_uris[0],
     state: state,
   });
   
@@ -40,7 +40,7 @@ exports.callback = async (req, res) => {
 
   try {
     const isServerOne = req.session.authServer === 'serverOne';
-    const endpoint = isServerOne ? authConfig.endpoints.serverOne.token : authConfig.endpoints.serverTwo.token;
+    const endpoint = isServerOne ? authConfig.endpoints.authServerOne.tokenEndpoint : authConfig.endpoints.authServerTwo.tokenEndpoint;
     
     // Determine client based on URL (simplification for this example)
     // You might need distinct callback routes if clients differ significantly
