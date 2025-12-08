@@ -25,16 +25,33 @@ router.get("/random", (req, res) => {
 router.get("/authorizeone", (req, res) => { req.params.type = 'one'; authController.startAuth(req, res); });
 router.get("/authorizetwo", (req, res) => { req.params.type = 'two'; authController.startAuth(req, res); });
 router.get("/authorizereuse", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
+// TODO impl
+router.get("/authorizeCodeCredsFlow", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
+router.get("/revokeOAuthToken", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
+router.get("/revokeThree", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
 
 // Callbacks
 router.get("/callback", authController.callback);
 router.get("/callbacknoncommunity", authController.callback);
+// TODO impl
+router.get("/callbackcodeexchange", authController.callback);
+router.get("/callbackreuse", authController.callback);
+router.get("/callbackclientcredsflow", authController.callback);
 
 // Actions requiring Auth
 router.get("/createaccount", (req, res) => {
   req.session.action = 'createAccount';
   res.redirect('/authorizetwo');
 });
+router.get("/downloadReport", (req, res) => {
+  req.session.action = 'report';
+  res.redirect(authorize());
+});
+router.get("/createPlatformEvent", (req, res) => {
+  res.render("platformEvent", { pe_response: "" });
+});
+//TODO impl
+router.get("/publishPlatfromEvent", (req, res) => { req.params.type = 'reuse'; authController.startAuth(req, res); });
 
 // --- API ---
 router.get("/v1/all", apiController.getProducts);
