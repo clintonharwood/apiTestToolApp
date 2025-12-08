@@ -45,8 +45,7 @@ router.get("/createaccount", (req, res) => {
 });
 router.get("/downloadReport", (req, res) => {
   req.session.action = 'report';
-  req.params.type = 'two';
-  res.redirect(authController.startAuth(req, res));
+  res.redirect('/authorizetwo');
 });
 router.get("/createPlatformEvent", (req, res) => {
   res.render("platformEvent", { pe_response: "" });
