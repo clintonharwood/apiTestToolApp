@@ -1,5 +1,5 @@
 const randomstring = require("randomstring");
-const authConfig = require("../config/auth");
+const authConfig = require("../config/authConfig");
 const { buildUrl, handleAxiosError } = require("../utils/helpers");
 const sfService = require("../services/salesforceService");
 
