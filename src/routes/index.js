@@ -12,6 +12,7 @@ router.get("/api", (req, res) => res.render("api"));
 router.get("/cmoney", (req, res) => res.render("cmoney"));
 router.get("/casedetailsvfpage", (req, res) => res.render("casedetailsvfpage"));
 router.get("/webtocase", (req, res) => res.render("webtocaseresult", { result: "Success" }));
+router.get("/auth", (req, res) => res.render("clientindex", { access_token: "" }));
 
 // --- Random Redirect ---
 router.get("/random", (req, res) => {
