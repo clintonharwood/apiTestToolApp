@@ -15,7 +15,6 @@ module.exports = helmet({
         ],
         scriptSrc: [
           "'self'",
-          "unsafe-inline",
           "https://getbootstrap.com",
           "https://cdn.jsdelivr.net",
           "https://d1q000001eewuuaa-dev-ed.develop.my.site.com",
