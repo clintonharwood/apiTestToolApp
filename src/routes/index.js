@@ -71,7 +71,7 @@ router.get("/render-lwc", async (req, res) => {
 });
 
 // 2. Callback: Exchange Code for Token
-app.get('/lightningoutcallback', async (req, res) => {
+router.get('/lightningoutcallback', async (req, res) => {
     const { code } = req.query;
 
     const params = new URLSearchParams();
