@@ -41,7 +41,8 @@ module.exports = helmet({
           "https://charwood-231102-76-demo.my.salesforce.com",
           "https://www.google-analytics.com",
           "https://cdn.jsdelivr.net",
-          "https://www.google.com"
+          "https://www.google.com",
+          "https://clintoxsupport.my.salesforce.com"
         ],
       },
     },
