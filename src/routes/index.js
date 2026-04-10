@@ -93,7 +93,7 @@ router.get('/lightningoutcallback', async (req, res) => {
         });
         console.log(fdRes);
 
-        let finalFrontdoorUrl = fdRes.data.url;
+        let finalFrontdoorUrl = fdRes.data.frontdoor_uri;
         if (!finalFrontdoorUrl.startsWith('https://')) {
             finalFrontdoorUrl = `https://${finalFrontdoorUrl}`;
         }
