@@ -107,6 +107,7 @@ router.get('/lightningoutcallback', async (req, res) => {
             }
         });
     } catch (err) {
+        console.error('Frontdoor Request Failed:', err.response ? err.response.data : err.message);
         res.status(500).send('Authentication failed: ' + err.message);
     }
 });
