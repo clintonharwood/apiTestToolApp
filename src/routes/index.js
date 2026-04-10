@@ -63,34 +63,42 @@ router.get("/v1/500", apiController.serverError);
 router.post("/v1/create", apiController.createRecord);
 router.get("/v1/timeout", timeout("140s"), (req, res) => {}); // Preserved
 router.get("/render-lwc", async (req, res) => {
+    const authUrl = `https://clintoxsupport.my.salesforce.com/services/oauth2/authorize?` + 
+        `response_type=code&` +
+        `client_id=${process.env.SF_CLIENT_ID_LO}&` +
+        `redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}`;
+    res.redirect(authUrl);
+});
+
+// 2. Callback: Exchange Code for Token
+app.get('/lightningoutcallback', async (req, res) => {
+    const { code } = req.query;
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('client_id', process.env.SF_CLIENT_ID_LO);
+    params.append('client_secret', process.env.SF_CLIENT_SECRET_LO);
+    params.append('redirect_uri', process.env.REDIRECT_URI);
+
     try {
-        // 1. Get Access Token (In a POC, you might use a Username/Password flow for simplicity, 
-        // though Web Server flow is better for production).
-        const tokenResponse = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, null, {
-            params: {
-                grant_type: 'client_credentials',
-                client_id: process.env.SF_CLIENT_ID_LO,
-                client_secret: process.env.SF_CLIENT_SECRET_LO
-            }
-        });
+        // Exchange code for Access Token
+        const tokenRes = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, params);
+        const { access_token, instance_url } = tokenRes.data;
 
-        const { access_token, instance_url } = tokenResponse.data;
-
-        // 2. Exchange Access Token for Frontdoor URL
-        // This is the new endpoint introduced for LO 2.0
-        const frontdoorResponse = await axios.get(`https://clintoxsupport.my.salesforce.com/services/oauth2/singleaccess`, {
+        // NOW you can call SingleAccess because this token has User Context
+        const fdRes = await axios.get(`https://clintoxsupport.my.salesforce.com/services/oauth2/singleaccess`, {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
 
-        // 3. Render the page with the Frontdoor URL and App ID
-        res.render('lightningout', { 
-            frontdoorUrl: frontdoorResponse.data.url, 
-            appId: '1UsOd00000000w5KAA',
-            instanceUrl: instance_url
+        // Render your EJS page with the Frontdoor URL
+        res.render('index', { 
+            frontdoorUrl: fdRes.data.url, 
+            instanceUrl: 'https://clintoxsupport.my.salesforce.com',
+            appId: '1UsOd00000000w5KAA'
         });
-    } catch (error) {
-      console.log(error)
-        res.status(500).send(error.message);
+    } catch (err) {
+        res.status(500).send('Authentication failed: ' + err.message);
     }
 });
 
