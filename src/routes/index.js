@@ -91,9 +91,15 @@ router.get('/lightningoutcallback', async (req, res) => {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
 
+        let finalFrontdoorUrl = fdRes.data.url;
+        if (!finalFrontdoorUrl.startsWith('https://')) {
+            finalFrontdoorUrl = `https://${finalFrontdoorUrl}`;
+        }
+        console.log(finalFrontdoorUrl);
+
         // Render your EJS page with the Frontdoor URL
         res.render('lightningout', { 
-            frontdoorUrl: fdRes.data.url, 
+            frontdoorUrl: finalFrontdoorUrl, 
             instanceUrl: 'https://clintoxsupport.my.salesforce.com',
             appId: '1UsOd00000000w5KAA',
             user: {
