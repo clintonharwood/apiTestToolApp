@@ -85,11 +85,13 @@ router.get('/lightningoutcallback', async (req, res) => {
         // Exchange code for Access Token
         const tokenRes = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, params);
         const { access_token, instance_url } = tokenRes.data;
+        console.log(tokenRes);
 
         // NOW you can call SingleAccess because this token has User Context
-        const fdRes = await axios.get(`https://clintoxsupport.my.salesforce.com/services/oauth2/singleaccess`, {
+        const fdRes = await axios.get(`${instance_url}/services/oauth2/singleaccess`, {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
+        console.log(fdRes);
 
         let finalFrontdoorUrl = fdRes.data.url;
         if (!finalFrontdoorUrl.startsWith('https://')) {
