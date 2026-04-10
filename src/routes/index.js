@@ -91,6 +91,7 @@ router.get("/render-lwc", async (req, res) => {
             instanceUrl: instance_url
         });
     } catch (error) {
+      console.log(error)
         res.status(500).send(error.message);
     }
 });
