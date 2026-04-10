@@ -109,12 +109,16 @@
         .sap-container { 
             border: 2px dashed #ccc; padding: 1rem; background: white; min-height: 400px; 
         }
-        lightning-out-application, 
+        /* Force the iframe to occupy space */
+        #mySalesforceApp, 
+        lightning-out-application,
         iframe[name="lightning_af"] {
             display: block !important;
             visibility: visible !important;
-            height: 500px !important; /* Force a height so it doesn't collapse */
+            min-height: 500px !important;
             width: 100% !important;
+            opacity: 1 !important;
+            border: 5px solid green !important;
         }
     </style>
 
