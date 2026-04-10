@@ -66,7 +66,7 @@ router.get("/render-lwc", async (req, res) => {
     try {
         // 1. Get Access Token (In a POC, you might use a Username/Password flow for simplicity, 
         // though Web Server flow is better for production).
-        const tokenResponse = await axios.post(`https://login.salesforce.com/services/oauth2/token`, null, {
+        const tokenResponse = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, null, {
             params: {
                 grant_type: 'client_credentials',
                 client_id: process.env.SF_CLIENT_ID_LO,
