@@ -92,7 +92,7 @@ router.get('/lightningoutcallback', async (req, res) => {
         });
 
         // Render your EJS page with the Frontdoor URL
-        res.render('index', { 
+        res.render('lightningout', { 
             frontdoorUrl: fdRes.data.url, 
             instanceUrl: 'https://clintoxsupport.my.salesforce.com',
             appId: '1UsOd00000000w5KAA'
