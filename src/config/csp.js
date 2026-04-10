@@ -9,6 +9,7 @@ module.exports = helmet({
           "https://devorg0923com-dev-ed--c.develop.vf.force.com",
           "https://api.clintox.xyz",
           "https://devorg0923com-dev-ed.develop.lightning.force.com",
+          "https://www.google.com"
         ],
         scriptSrc: [
           "'self'",
@@ -20,16 +21,25 @@ module.exports = helmet({
           "https://www.googletagmanager.com",
           "'sha256-01McX6yilenjHdhh6gHZhqoQd8yF5YZ0HT/Lg0X0ZJU='",
           "'sha256-ndtgPgVtujsEhQjCvETtfn17lotkVcRabh9McELqQHA='",
+          "https://www.google.com",
+          "https://www.gstatic.com",
+          "'sha256-IZoI+xJzbHf5q475rrGdGKFFRqEumHmPYjEjr7H1vP4='",
+          "'sha256-LuC1ojY/N5Zjvttgyzvv5jIxqXLrQdwRQsm14xxtcvs='",
+          "'sha256-dmyOBVqWWItlJZLd20ovmaS98qGbMq3hfbtMhQ9fb0w='",
+          "'nonce-8IBTHwOdqNKAWeKl7plt8gmnshey987=='"
         ],
         imgSrc: [
           "'self'",
           "https://getbootstrap.com",
           "https://upload.wikimedia.org",
+          "https://www.googletagmanager.com"
         ],
         connectSrc: [
           "'self'",
           "https://charwood-231102-76-demo.my.salesforce.com",
           "https://www.google-analytics.com",
+          "https://cdn.jsdelivr.net",
+          "https://www.google.com"
         ],
       },
     },

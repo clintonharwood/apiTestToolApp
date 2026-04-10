@@ -65,3 +65,39 @@ exports.downloadReport = async (accessToken) => {
   });
   return response.data;
 };
+
+exports.headlessPasswordReset = async (username, captchaToken) => {
+  const requestBody = {
+    username: username,
+    recaptcha: captchaToken
+  }
+  const response = await axios.post(
+      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`, 
+      requestBody, 
+      {
+          headers: { 
+              'Content-Type': 'application/json'
+          }
+      }
+  );
+  return response.data;
+};
+
+exports.headlessPasswordSet = async (username, otp, password, recaptcha) => {
+  const requestBody = {
+    username: username,
+    otp: otp,
+    newpassword: password,
+    recaptcha: recaptcha
+  }
+  const response = await axios.post(
+      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`, 
+      requestBody, 
+      {
+          headers: { 
+              'Content-Type': 'application/json'
+          }
+      }
+  );
+  return response.data;
+};
