@@ -68,11 +68,9 @@ router.get("/render-lwc", async (req, res) => {
         // though Web Server flow is better for production).
         const tokenResponse = await axios.post(`https://login.salesforce.com/services/oauth2/token`, null, {
             params: {
-                grant_type: 'password',
+                grant_type: 'client_credentials',
                 client_id: process.env.SF_CLIENT_ID_LO,
-                client_secret: process.env.SF_CLIENT_SECRET_LO,
-                username: process.env.SF_USERNAME,
-                password: process.env.SF_PASSWORD
+                client_secret: process.env.SF_CLIENT_SECRET_LO
             }
         });
 
