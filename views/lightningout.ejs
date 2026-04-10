@@ -170,21 +170,34 @@
     </div>
 
     <script nonce="8IBTHwOdqNKAWeKl7plt8gmnshaskdjdud==">
-        // 3. Select the LWC instance to communicate with it
-        // Note: The tag name is the component name (c-poc-component)
+    // 1. Select the Lightning Out Application container
+    const loApp = document.getElementById('mySalesforceApp');
+
+    // 2. Wait for the 'onready' event before trying to find the LWC
+    loApp.addEventListener('onready', () => {
+        console.log('Lightning Out 2.0 is ready and rendered.');
+
+        // 3. Now the LWC exists in the DOM, we can safely select it
         const lwcNode = document.querySelector('c-lightning-out-two-wrapper');
 
-        // Listen for the specific CustomEvent dispatched by your LWC
-        lwcNode.addEventListener('herokumessage', (event) => {
-            console.log('Data received from Salesforce:', event.detail);
-            alert('LWC says: ' + event.detail.message);
-        });
+        if (lwcNode) {
+            // Listen for your CustomEvent ('herokumessage')
+            lwcNode.addEventListener('herokumessage', (event) => {
+                console.log('Data received from Salesforce:', event.detail);
+                alert('LWC says: ' + event.detail.message);
+            });
 
-        // Optional: Listen for when the component is fully loaded in the iframe
-        lwcNode.addEventListener('lo.component.ready', () => {
-            console.log('The Salesforce LWC is now visible and interactive.');
-        });
-    </script>
+            // LO 2.0 standard ready event for the specific component
+            lwcNode.addEventListener('lo.component.ready', () => {
+                console.log('The Salesforce LWC is now visible and interactive.');
+            });
+            
+            console.log('Listeners successfully attached to LWC.');
+        } else {
+            console.error('LWC component could not be found even after onready.');
+        }
+    });
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
