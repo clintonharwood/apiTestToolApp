@@ -109,17 +109,6 @@
         .sap-container { 
             border: 2px dashed #ccc; padding: 1rem; background: white; min-height: 400px; 
         }
-        /* Force the iframe to occupy space */
-        #mySalesforceApp, 
-        lightning-out-application,
-        iframe[name="lightning_af"] {
-            display: block !important;
-            visibility: visible !important;
-            min-height: 500px !important;
-            width: 100% !important;
-            opacity: 1 !important;
-            border: 5px solid green !important;
-        }
     </style>
 
     <!-- Custom styles for this template -->
@@ -164,9 +153,9 @@
             <p>The box below contains a live LWC from Salesforce.</p>
 
             <div class="sap-container">
-                <lightning-out-application id="mySalesforceApp" app-id="<%= appId %>" frontdoor-url="<%= frontdoorUrl %>" components="c-lightning-out-two-wrapper" c-lightning-out-two-wrapper-header-title="Hello from <%= user.name %>!"></lightning-out-application>
-                <lightning-out-application app-id="1UsOd00000000w5KAA" components="c-lightning-out-two-wrapper"></lightning-out-application>
-                <c-lightning-out-two-wrapper></c-lightning-out-two-wrapper>
+                <lightning-out-application id="mySalesforceApp" app-id="<%= appId %>" frontdoor-url="<%= frontdoorUrl %>" components="c-lightning-out-two-wrapper">
+                    <c-lightning-out-two-wrapper header-title="Hello from <%= user.name %>!"></c-lightning-out-two-wrapper>
+                </lightning-out-application>
             </div>
         </main>
 
