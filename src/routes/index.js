@@ -95,7 +95,10 @@ router.get('/lightningoutcallback', async (req, res) => {
         res.render('lightningout', { 
             frontdoorUrl: fdRes.data.url, 
             instanceUrl: 'https://clintoxsupport.my.salesforce.com',
-            appId: '1UsOd00000000w5KAA'
+            appId: '1UsOd00000000w5KAA',
+            user: {
+                name: "Salesforce Trailblazer" 
+            }
         });
     } catch (err) {
         res.status(500).send('Authentication failed: ' + err.message);
