@@ -109,6 +109,13 @@
         .sap-container { 
             border: 2px dashed #ccc; padding: 1rem; background: white; min-height: 400px; 
         }
+        lightning-out-application, 
+        iframe[name="lightning_af"] {
+            display: block !important;
+            visibility: visible !important;
+            height: 500px !important; /* Force a height so it doesn't collapse */
+            width: 100% !important;
+        }
     </style>
 
     <!-- Custom styles for this template -->
