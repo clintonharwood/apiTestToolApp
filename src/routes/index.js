@@ -70,7 +70,8 @@ router.get("/render-lwc", async (req, res) => {
             params: {
                 grant_type: 'client_credentials',
                 client_id: process.env.SF_CLIENT_ID_LO,
-                client_secret: process.env.SF_CLIENT_SECRET_LO
+                client_secret: process.env.SF_CLIENT_SECRET_LO,
+                scope: 'api id web'
             }
         });
 
