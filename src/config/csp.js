@@ -10,7 +10,8 @@ module.exports = helmet({
           "https://api.clintox.xyz",
           "https://devorg0923com-dev-ed.develop.lightning.force.com",
           "https://www.google.com",
-          "https://clintoxsupport.my.salesforce.com"
+          "https://clintoxsupport.my.salesforce.com",
+          "https://clintoxsupport.file.force.com"
         ],
         scriptSrc: [
           "'self'",
