@@ -2,12 +2,12 @@ module.exports = {
     clients: {
         one: {
             client_id: process.env.CLIENT_ID,
-            client_secret: process.env.CLENT_SECRET,
+            client_secret: process.env.CLIENT_SECRET,
             redirect_uris: ["https://clintox.xyz/callback"],
         },
         two: {
             client_id: process.env.CLIENT_ID_TWO,
-            client_secret: process.env.CLENT_SECRET_TWO,
+            client_secret: process.env.CLIENT_SECRET_TWO,
             redirect_uris: ["https://clintox.xyz/callbacknoncommunity"],
         },
         three: {

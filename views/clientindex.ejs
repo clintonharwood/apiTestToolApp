@@ -143,7 +143,7 @@
     </header>
 
     <main class="px-3">
-      <p class="lead">Access token value: <%- access_token ? access_token : 'NONE' %></p>
+      <p class="lead">Access token value: <%= access_token ? access_token : 'NONE' %></p>
       <ul class="list-group list-group-flush lead">
         <li class="list-group-item"><a class="nav-link py-1 px-0 active" aria-current="page" href="/authorizeOne">Get OAuth Token CD</a></li>
         <li class="list-group-item"><a class="nav-link py-1 px-0 active" aria-current="page" href="/authorizeTwo">Get OAuth Token ES</a></li>

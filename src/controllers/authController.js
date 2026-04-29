@@ -4,11 +4,10 @@ const { buildUrl, handleAxiosError } = require("../utils/helpers");
 const sfService = require("../services/salesforceService");
 
 // Start Auth Flow
-exports.startAuth = (req, res) => {
-  const type = req.params.type; // 'one', 'two', 'three', 'reuse'
+exports.startAuth = (req, res, type) => {
   const state = randomstring.generate();
-  req.session.oauthState = state; // Safe storage
-  
+  req.session.oauthState = state;
+
   let endpoint = authConfig.endpoints.authServerOne.authorizationEndpoint;
   let client = authConfig.clients.one;
 
@@ -25,44 +24,57 @@ exports.startAuth = (req, res) => {
     req.session.authServer = 'serverOne';
   }
 
+  req.session.oauthClientKey = Object.keys(authConfig.clients).find(
+    k => authConfig.clients[k] === client
+  );
+
   const url = buildUrl(endpoint, {
     response_type: type === 'three' ? "client_credentials" : "code",
     client_id: client.client_id,
     redirect_uri: client.redirect_uris[0],
     state: state,
   });
-  
+
   res.redirect(url);
 };
 
 // Callback Handler
 exports.callback = async (req, res) => {
   const { code, state, error } = req.query;
-  if (error) return res.render("error", { error });
-  if (state !== req.session.oauthState) return res.render("error", { error: "State mismatch" });
+  if (error) return res.render("error", { error: "Authorization error" });
+  if (!state || !req.session.oauthState || state !== req.session.oauthState) {
+    return res.render("error", { error: "State mismatch" });
+  }
 
   try {
     const isServerOne = req.session.authServer === 'serverOne';
     const endpoint = isServerOne ? authConfig.endpoints.authServerOne.tokenEndpoint : authConfig.endpoints.authServerTwo.tokenEndpoint;
-    
-    // Determine client based on URL (simplification for this example)
-    // You might need distinct callback routes if clients differ significantly
-    const client = req.path.includes('noncommunity') ? authConfig.clients.two : authConfig.clients.one;
+
+    const clientKey = req.session.oauthClientKey || 'one';
+    const client = authConfig.clients[clientKey];
+    const action = req.session.action;
 
     const tokenData = await sfService.getTokenAuthCode(code, endpoint, client);
-    req.session.accessToken = tokenData.access_token;
-    
-    // Handle post-login actions (Create Account / Download Report)
-    if (req.session.action === 'createAccount') {
-       const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
-       return res.render("createaccountui", { result: JSON.stringify(acc) });
-    } else if (req.session.action === 'report') {
-       const report = await sfService.downloadReport(tokenData.access_token);
-       res.attachment("report.xlsx");
-       return res.send(report);
-    }
-    
-    res.render("clientindex", { access_token: tokenData.access_token });
+
+    // Regenerate session after login to prevent session fixation
+    req.session.regenerate(async (err) => {
+      if (err) return res.render("error", { error: "Session error" });
+      req.session.accessToken = tokenData.access_token;
+
+      try {
+        if (action === 'createAccount') {
+          const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
+          return res.render("createaccountui", { result: JSON.stringify(acc) });
+        } else if (action === 'report') {
+          const report = await sfService.downloadReport(tokenData.access_token);
+          res.attachment("report.xlsx");
+          return res.send(report);
+        }
+        res.render("clientindex", { access_token: tokenData.access_token });
+      } catch (innerErr) {
+        handleAxiosError(innerErr, res, "Callback");
+      }
+    });
   } catch (err) {
     handleAxiosError(err, res, "Callback");
   }

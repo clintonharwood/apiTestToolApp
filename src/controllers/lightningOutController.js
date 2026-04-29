@@ -1,0 +1,58 @@
+const axios = require('axios');
+const randomstring = require("randomstring");
+const { handleAxiosError } = require("../utils/helpers");
+
+exports.renderLwc = (req, res) => {
+    const state = randomstring.generate();
+    req.session.lightningOutState = state;
+
+    const authUrl = `https://clintoxsupport.my.salesforce.com/services/oauth2/authorize?` +
+        `response_type=code&` +
+        `client_id=${process.env.SF_CLIENT_ID_LO}&` +
+        `redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&` +
+        `state=${encodeURIComponent(state)}`;
+    res.redirect(authUrl);
+};
+
+exports.callback = async (req, res) => {
+    const { code, state } = req.query;
+
+    if (!state || !req.session.lightningOutState || state !== req.session.lightningOutState) {
+        return res.status(400).render("error", { error: "State mismatch" });
+    }
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('client_id', process.env.SF_CLIENT_ID_LO);
+    params.append('client_secret', process.env.SF_CLIENT_SECRET_LO);
+    params.append('redirect_uri', process.env.REDIRECT_URI);
+
+    try {
+        const tokenRes = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, params);
+        const { access_token, instance_url } = tokenRes.data;
+
+        const fdRes = await axios.get(`${instance_url}/services/oauth2/singleaccess`, {
+            headers: { 'Authorization': `Bearer ${access_token}` }
+        });
+
+        let finalFrontdoorUrl = fdRes.data.frontdoor_uri;
+        if (!finalFrontdoorUrl.startsWith('https://')) {
+            finalFrontdoorUrl = `https://${finalFrontdoorUrl}`;
+        }
+
+        req.session.regenerate((err) => {
+            if (err) return res.render("error", { error: "Session error" });
+            res.render('lightningout', {
+                frontdoorUrl: finalFrontdoorUrl,
+                instanceUrl: 'https://clintoxsupport.my.salesforce.com',
+                appId: '1UsOd00000000w5KAA',
+                user: {
+                    name: "Salesforce Trailblazer"
+                }
+            });
+        });
+    } catch (err) {
+        handleAxiosError(err, res, "Lightning Out callback");
+    }
+};

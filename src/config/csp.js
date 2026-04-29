@@ -1,6 +1,6 @@
 const helmet = require("helmet");
 
-module.exports = helmet({
+module.exports = (nonce) => helmet({
     contentSecurityPolicy: {
       directives: {
         frameSrc: [
@@ -15,6 +15,7 @@ module.exports = helmet({
         ],
         scriptSrc: [
           "'self'",
+          `'nonce-${nonce}'`,
           "https://getbootstrap.com",
           "https://cdn.jsdelivr.net",
           "https://d1q000001eewuuaa-dev-ed.develop.my.site.com",
@@ -28,8 +29,6 @@ module.exports = helmet({
           "'sha256-IZoI+xJzbHf5q475rrGdGKFFRqEumHmPYjEjr7H1vP4='",
           "'sha256-LuC1ojY/N5Zjvttgyzvv5jIxqXLrQdwRQsm14xxtcvs='",
           "'sha256-dmyOBVqWWItlJZLd20ovmaS98qGbMq3hfbtMhQ9fb0w='",
-          "'nonce-8IBTHwOdqNKAWeKl7plt8gmnshey987=='",
-          "'nonce-8IBTHwOdqNKAWeKl7plt8gmnshaskdjdud=='",
           "https://clintoxsupport.my.salesforce.com"
         ],
         imgSrc: [

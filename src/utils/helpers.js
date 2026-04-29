@@ -1,28 +1,12 @@
-const url = require("url");
-const __ = require("underscore");
+const crypto = require("crypto");
 
-const generateUUID = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+const generateUUID = () => crypto.randomUUID();
 
 const buildUrl = (base, options, hash) => {
-  var newUrl = url.parse(base, true);
-  delete newUrl.search;
-  if (!newUrl.query) {
-    newUrl.query = {};
-  }
-  __.each(options, function (value, key, list) {
-    newUrl.query[key] = value;
-  });
-  if (hash) {
-    newUrl.hash = hash;
-  }
-
-  return url.format(newUrl);
+  const u = new URL(base);
+  Object.entries(options).forEach(([k, v]) => u.searchParams.set(k, v));
+  if (hash) u.hash = hash;
+  return u.toString();
 };
 
 const encodeClientCredentials = (clientId, clientSecret) => {
@@ -31,11 +15,9 @@ const encodeClientCredentials = (clientId, clientSecret) => {
   ).toString("base64");
 };
 
-// Centralized error handling for Axios
 const handleAxiosError = (error, res, context = "Request") => {
-  console.error(`${context} Failed:`, error.message);
-  const msg = error.response ? JSON.stringify(error.response.data) : error.message;
-  res.render("error", { error: `${context} failed: ${msg}` });
+  console.error(`${context} Failed:`, error.response?.data ?? error.message);
+  res.render("error", { error: `${context} failed. Please try again.` });
 };
 
 const salesforceDocs = [
@@ -62,4 +44,4 @@ const salesforceDocs = [
   "https://developer.salesforce.com/docs/einstein/genai/guide/agent-api.html",
 ];
 
-module.exports = {buildUrl, generateUUID, encodeClientCredentials, handleAxiosError, salesforceDocs}
+module.exports = { buildUrl, generateUUID, encodeClientCredentials, handleAxiosError, salesforceDocs };

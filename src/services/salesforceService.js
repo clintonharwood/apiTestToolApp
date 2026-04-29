@@ -57,9 +57,7 @@ exports.downloadReport = async (accessToken) => {
   const url = "https://clintoxsupport.my.salesforce.com/services/data/v60.0/analytics/reports/00O5K000000XecLUAS";
   const response = await axios.get(url, {
     headers: {
-      "Content-Type": "application/json",
-       "Content-Type":
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       Authorization: "Bearer " + accessToken,
     }
   });

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const crypto = require("crypto");
 const express = require("express");
 const logger = require("morgan");
 const path = require("path");
@@ -6,31 +7,43 @@ const cors = require("cors");
 const helmet = require("helmet");
 const session = require("express-session");
 
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) throw new Error("SESSION_SECRET environment variable is required");
+
 // Configuration
-const cspConfig = require("./src/config/csp");
+const buildCspConfig = require("./src/config/csp");
 const routes = require("./src/routes/index");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
+
+// Trust Heroku's TLS-terminating proxy so secure cookies work
+app.set("trust proxy", 1);
 
 // View Engine
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Per-request CSP nonce — must run before helmet/csp
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString("base64");
+  next();
+});
+
 // Middleware
 app.use(logger("short"));
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN || "https://clintox.xyz", credentials: true }));
 app.use(helmet({ xFrameOptions: { action: "sameorigin" } }));
-app.use(cspConfig);
+app.use((req, res, next) => buildCspConfig(res.locals.cspNonce)(req, res, next));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev_secret_key',
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, maxAge: 60000 * 30 } // 30 mins
+  cookie: { secure: true, httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
 
 // Routes
