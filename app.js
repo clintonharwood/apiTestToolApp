@@ -46,6 +46,11 @@ app.use(session({
   cookie: { secure: true, httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
 
+// Serve favicon
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "src/images/favicon.ico"));
+});
+
 // Routes
 app.use("/", routes);
 
