@@ -60,6 +60,7 @@ exports.callback = async (req, res) => {
     req.session.regenerate(async (err) => {
       if (err) return res.render("error", { error: "Session error" });
       req.session.accessToken = tokenData.access_token;
+      req.session.instanceUrl = tokenData.instance_url;
 
       try {
         if (action === 'createAccount') {

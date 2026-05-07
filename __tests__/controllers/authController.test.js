@@ -164,6 +164,21 @@ describe('callback', () => {
     expect(res.render).toHaveBeenCalledWith('clientindex', { access_token: 'tok123' });
   });
 
+  test('stores instance_url from token response in session', async () => {
+    sfService.getTokenAuthCode.mockResolvedValue({
+      access_token: 'tok123',
+      instance_url: 'https://example.my.salesforce.com',
+    });
+    const req = mockReq({
+      session: { oauthState: 'st', authServer: 'serverOne', oauthClientKey: 'one' },
+      query: { code: 'code', state: 'st' }
+    });
+
+    await authController.callback(req, mockRes());
+
+    expect(req.session.instanceUrl).toBe('https://example.my.salesforce.com');
+  });
+
   test('createAccount flow — renders createaccountui', async () => {
     sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
     sfService.createAccount.mockResolvedValue({ id: 'acc001', success: true });
