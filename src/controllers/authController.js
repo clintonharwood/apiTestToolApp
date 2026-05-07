@@ -54,6 +54,8 @@ exports.callback = async (req, res) => {
     const client = authConfig.clients[clientKey];
     const action = req.session.action;
 
+    console.log(client);
+    console.log(endpoint);
     const tokenData = await sfService.getTokenAuthCode(code, endpoint, client);
 
     // Regenerate session after login to prevent session fixation
