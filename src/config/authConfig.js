@@ -36,9 +36,9 @@ module.exports = {
         },
         authServerTwo: {
             authorizationEndpoint:
-                "https://clintoxsupport.my.salesforce.com/services/oauth2/authorize",
+                "https://clintoxsupport.my.site.com/employees/services/oauth2/authorize",
             tokenEndpoint:
-                "https://clintoxsupport.my.salesforce.com/services/oauth2/token",
+                "https://clintoxsupport.my.site.com/employees/services/oauth2/token",
         },
         salesforceAuthServer: {
             authorizationEndpoint:
