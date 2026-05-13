@@ -35,6 +35,8 @@ exports.startAuth = (req, res, type) => {
     state: state,
   });
 
+  console.log(url);
+
   res.redirect(url);
 };
 
@@ -54,6 +56,7 @@ exports.callback = async (req, res) => {
     const clientKey = req.session.oauthClientKey || 'one';
     const client = authConfig.clients[clientKey];
     const action = req.session.action;
+    console.log(client);
 
     const tokenData = await sfService.getTokenAuthCode(code, endpoint, client);
 
