@@ -6,12 +6,13 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
   const data = qs.stringify({
     grant_type: "authorization_code",
     code: code,
-    redirect_uri: clientConfig.redirectUri,
+    client_id: clientConfig.id,
+    client_secret: clientConfig.secret,
+    redirect_uri: clientConfig.redirectUri
   });
 
   const headers = {
-    "Content-Type": "application/x-www-form-urlencoded",
-    Authorization: "Basic " + encodeClientCredentials(clientConfig.id, clientConfig.secret),
+    "Content-Type": "application/x-www-form-urlencoded"
   };
 
   const response = await axios.post(endpoint, data, { headers });
