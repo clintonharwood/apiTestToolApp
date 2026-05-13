@@ -8,7 +8,7 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
     code: code,
     client_id: clientConfig.id,
     client_secret: clientConfig.secret,
-    redirect_uri: clientConfig.redirectUri
+    redirect_uri: clientConfig.redirect_uris
   });
 
   const headers = {
