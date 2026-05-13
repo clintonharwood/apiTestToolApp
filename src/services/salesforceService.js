@@ -6,8 +6,8 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
   const data = qs.stringify({
     grant_type: "authorization_code",
     code: code,
-    client_id: clientConfig.id,
-    client_secret: clientConfig.secret,
+    client_id: clientConfig.client_id,
+    client_secret: clientConfig.client_secret,
     redirect_uri: clientConfig.redirect_uris[0]
   });
 
