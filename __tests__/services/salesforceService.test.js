@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe('getTokenAuthCode', () => {
-  const clientConfig = { id: 'clientId', secret: 'clientSecret', redirectUri: 'https://app/callback' };
+  const clientConfig = { client_id: 'clientId', client_secret: 'clientSecret', redirect_uris: ['https://app/callback'] };
 
   test('posts to the provided endpoint', async () => {
     axios.post.mockResolvedValue({ data: { access_token: 'tok' } });
@@ -20,15 +20,13 @@ describe('getTokenAuthCode', () => {
     );
   });
 
-  test('sends Basic auth header with base64-encoded credentials', async () => {
+  test('sends client_id and client_secret in request body', async () => {
     axios.post.mockResolvedValue({ data: {} });
     await sfService.getTokenAuthCode('code', 'https://auth.example.com/token', clientConfig);
 
-    const headers = axios.post.mock.calls[0][2].headers;
-    expect(headers.Authorization).toMatch(/^Basic /);
-    const decoded = Buffer.from(headers.Authorization.replace('Basic ', ''), 'base64').toString();
-    expect(decoded).toContain('clientId');
-    expect(decoded).toContain('clientSecret');
+    const body = axios.post.mock.calls[0][1];
+    expect(body).toContain('client_id=clientId');
+    expect(body).toContain('client_secret=clientSecret');
   });
 
   test('returns response data', async () => {
