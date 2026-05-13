@@ -49,6 +49,7 @@ exports.callback = async (req, res) => {
   try {
     const isServerOne = req.session.authServer === 'serverOne';
     const endpoint = isServerOne ? authConfig.endpoints.authServerOne.tokenEndpoint : authConfig.endpoints.authServerTwo.tokenEndpoint;
+    console.log(endpoint);
 
     const clientKey = req.session.oauthClientKey || 'one';
     const client = authConfig.clients[clientKey];
