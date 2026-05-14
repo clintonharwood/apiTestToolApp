@@ -16,32 +16,28 @@ module.exports = (nonce) => helmet({
         scriptSrc: [
           "'self'",
           `'nonce-${nonce}'`,
-          "https://getbootstrap.com",
-          "https://cdn.jsdelivr.net",
-          "https://d1q000001eewuuaa-dev-ed.develop.my.site.com",
-          "https://charwood-231102-76-demo.my.salesforce.com",
-          "'sha256-5spuWCVR8naaA9qHWsLq9BLZVhf+GmOU7bYeAW/YKl8='",
           "https://www.googletagmanager.com",
-          "'sha256-01McX6yilenjHdhh6gHZhqoQd8yF5YZ0HT/Lg0X0ZJU='",
-          "'sha256-ndtgPgVtujsEhQjCvETtfn17lotkVcRabh9McELqQHA='",
           "https://www.google.com",
           "https://www.gstatic.com",
-          "'sha256-IZoI+xJzbHf5q475rrGdGKFFRqEumHmPYjEjr7H1vP4='",
-          "'sha256-LuC1ojY/N5Zjvttgyzvv5jIxqXLrQdwRQsm14xxtcvs='",
-          "'sha256-dmyOBVqWWItlJZLd20ovmaS98qGbMq3hfbtMhQ9fb0w='",
           "https://clintoxsupport.my.salesforce.com"
+        ],
+        styleSrc: [
+          "'self'",
+          `'nonce-${nonce}'`,
+          "https://fonts.googleapis.com"
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com"
         ],
         imgSrc: [
           "'self'",
-          "https://getbootstrap.com",
           "https://upload.wikimedia.org",
           "https://www.googletagmanager.com"
         ],
         connectSrc: [
           "'self'",
-          "https://charwood-231102-76-demo.my.salesforce.com",
           "https://www.google-analytics.com",
-          "https://cdn.jsdelivr.net",
           "https://www.google.com",
           "https://clintoxsupport.my.salesforce.com"
         ],

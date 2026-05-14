@@ -1,11 +1,17 @@
-const randomstring = require("randomstring");
+const crypto = require("crypto");
 const authConfig = require("../config/authConfig");
 const { buildUrl, handleAxiosError } = require("../utils/helpers");
 const sfService = require("../services/salesforceService");
 
+const VALID_TYPES = ['one', 'two', 'three', 'reuse'];
+
 // Start Auth Flow
 exports.startAuth = (req, res, type) => {
-  const state = randomstring.generate();
+  if (!VALID_TYPES.includes(type)) {
+    return res.status(400).render('error', { error: 'Invalid auth type' });
+  }
+
+  const state = crypto.randomBytes(32).toString('hex');
   req.session.oauthState = state;
 
   let endpoint = authConfig.endpoints.authServerOne.authorizationEndpoint;
@@ -34,8 +40,6 @@ exports.startAuth = (req, res, type) => {
     redirect_uri: client.redirect_uris[0],
     state: state,
   });
-
-  console.log(url);
 
   res.redirect(url);
 };

@@ -2,6 +2,8 @@ const axios = require('axios');
 const qs = require('qs');
 const { encodeClientCredentials } = require('../utils/helpers');
 
+const TIMEOUT = 15000;
+
 exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
   const data = qs.stringify({
     grant_type: "authorization_code",
@@ -15,7 +17,7 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
-  const response = await axios.post(endpoint, data, { headers });
+  const response = await axios.post(endpoint, data, { headers, timeout: TIMEOUT });
   return response.data;
 };
 
@@ -27,7 +29,8 @@ exports.getTokenClientCreds = async (endpoint, clientConfig) => {
   });
 
   const response = await axios.post(endpoint, data, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    timeout: TIMEOUT
   });
   return response.data;
 };
@@ -38,7 +41,8 @@ exports.publishPlatformEvent = async (accessToken, eventData) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + accessToken,
-    }
+    },
+    timeout: TIMEOUT
   });
   return response.data;
 };
@@ -49,7 +53,8 @@ exports.createAccount = async (accessToken, accountData) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + accessToken,
-    }
+    },
+    timeout: TIMEOUT
   });
   return response.data;
 };
@@ -60,7 +65,8 @@ exports.downloadReport = async (accessToken) => {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       Authorization: "Bearer " + accessToken,
-    }
+    },
+    timeout: TIMEOUT
   });
   return response.data;
 };
@@ -71,12 +77,13 @@ exports.headlessPasswordReset = async (username, captchaToken) => {
     recaptcha: captchaToken
   }
   const response = await axios.post(
-      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`, 
-      requestBody, 
+      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`,
+      requestBody,
       {
-          headers: { 
+          headers: {
               'Content-Type': 'application/json'
-          }
+          },
+          timeout: TIMEOUT
       }
   );
   return response.data;
@@ -90,12 +97,13 @@ exports.headlessPasswordSet = async (username, otp, password, recaptcha) => {
     recaptcha: recaptcha
   }
   const response = await axios.post(
-      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`, 
-      requestBody, 
+      `https://clintoxsupport.my.site.com/complaintsnew/services/auth/headless/forgot_password`,
+      requestBody,
       {
-          headers: { 
+          headers: {
               'Content-Type': 'application/json'
-          }
+          },
+          timeout: TIMEOUT
       }
   );
   return response.data;

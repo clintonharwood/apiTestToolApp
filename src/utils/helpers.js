@@ -16,7 +16,7 @@ const encodeClientCredentials = (clientId, clientSecret) => {
 };
 
 const handleAxiosError = (error, res, context = "Request") => {
-  console.error(`${context} Failed:`, error.response?.data ?? error.message);
+  console.error(`${context} Failed: status=${error.response?.status} code=${error.response?.data?.[0]?.errorCode ?? error.response?.data?.errorCode ?? 'N/A'}`);
   res.render("error", { error: `${context} failed. Please try again.` });
 };
 

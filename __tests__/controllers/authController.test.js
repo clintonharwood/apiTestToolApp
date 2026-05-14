@@ -1,4 +1,3 @@
-jest.mock('randomstring', () => ({ generate: jest.fn(() => 'mock_state_value') }));
 jest.mock('../../src/services/salesforceService');
 jest.mock('../../src/utils/helpers', () => ({
   buildUrl: jest.fn(() => 'https://auth.example.com/authorize?mocked=true'),
@@ -8,7 +7,6 @@ jest.mock('../../src/utils/helpers', () => ({
 const authController = require('../../src/controllers/authController');
 const sfService = require('../../src/services/salesforceService');
 const { buildUrl, handleAxiosError } = require('../../src/utils/helpers');
-const randomstring = require('randomstring');
 const authConfig = require('../../src/config/authConfig');
 
 const mockReq = (overrides = {}) => {
@@ -41,7 +39,7 @@ describe('startAuth', () => {
   test('stores generated state in session', () => {
     const req = mockReq();
     authController.startAuth(req, mockRes(), 'one');
-    expect(req.session.oauthState).toBe('mock_state_value');
+    expect(req.session.oauthState).toMatch(/^[0-9a-f]{64}$/);
   });
 
   test('type "one" — sets authServer to serverOne in session', () => {
@@ -127,7 +125,7 @@ describe('startAuth', () => {
   test('includes state in buildUrl params', () => {
     authController.startAuth(mockReq(), mockRes(), 'one');
     const params = buildUrl.mock.calls[0][1];
-    expect(params.state).toBe('mock_state_value');
+    expect(params.state).toMatch(/^[0-9a-f]{64}$/);
   });
 });
 

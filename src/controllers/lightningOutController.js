@@ -1,9 +1,11 @@
 const axios = require('axios');
-const randomstring = require("randomstring");
+const crypto = require('crypto');
 const { handleAxiosError } = require("../utils/helpers");
 
+const ALLOWED_SF_HOSTNAMES = /^[a-zA-Z0-9-]+\.(my\.salesforce\.com|my\.site\.com|force\.com|salesforce-sites\.com)$/;
+
 exports.renderLwc = (req, res) => {
-    const state = randomstring.generate();
+    const state = crypto.randomBytes(32).toString('hex');
     req.session.lightningOutState = state;
 
     const authUrl = `https://clintoxsupport.my.salesforce.com/services/oauth2/authorize?` +
@@ -29,16 +31,25 @@ exports.callback = async (req, res) => {
     params.append('redirect_uri', process.env.REDIRECT_URI);
 
     try {
-        const tokenRes = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, params);
+        const tokenRes = await axios.post(`https://clintoxsupport.my.salesforce.com/services/oauth2/token`, params, { timeout: 15000 });
         const { access_token, instance_url } = tokenRes.data;
 
         const fdRes = await axios.get(`${instance_url}/services/oauth2/singleaccess`, {
-            headers: { 'Authorization': `Bearer ${access_token}` }
+            headers: { 'Authorization': `Bearer ${access_token}` },
+            timeout: 15000
         });
 
         let finalFrontdoorUrl = fdRes.data.frontdoor_uri;
         if (!finalFrontdoorUrl.startsWith('https://')) {
             finalFrontdoorUrl = `https://${finalFrontdoorUrl}`;
+        }
+        try {
+            const parsedUrl = new URL(finalFrontdoorUrl);
+            if (!ALLOWED_SF_HOSTNAMES.test(parsedUrl.hostname)) {
+                return res.status(400).render('error', { error: 'Invalid frontdoor URL' });
+            }
+        } catch {
+            return res.status(400).render('error', { error: 'Invalid frontdoor URL' });
         }
 
         req.session.regenerate((err) => {
