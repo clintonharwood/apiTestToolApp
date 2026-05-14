@@ -15,7 +15,7 @@ router.get("/callbacknoncommunity", authController.callback);
 // TODO impl
 router.get("/callbackcodeexchange", authController.callback);
 router.get("/callbackreuse", authController.callback);
-router.get("/callbackclientcredsflow", authController.callback);
+router.get("/callbackclientcredsflow", authController.callbackClientCreds);
 
 router.get("/createaccount", (req, res) => {
   req.session.action = 'createAccount';

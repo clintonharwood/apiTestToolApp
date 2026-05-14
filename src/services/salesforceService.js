@@ -1,6 +1,5 @@
 const axios = require('axios');
 const qs = require('qs');
-const { encodeClientCredentials } = require('../utils/helpers');
 
 const TIMEOUT = 15000;
 
@@ -24,8 +23,8 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
 exports.getTokenClientCreds = async (endpoint, clientConfig) => {
   const data = qs.stringify({
     grant_type: "client_credentials",
-    client_id: clientConfig.id,
-    client_secret: clientConfig.secret,
+    client_id: clientConfig.client_id,
+    client_secret: clientConfig.client_secret,
   });
 
   const response = await axios.post(endpoint, data, {

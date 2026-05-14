@@ -43,7 +43,7 @@ describe('getTokenAuthCode', () => {
 });
 
 describe('getTokenClientCreds', () => {
-  const clientConfig = { id: 'cid', secret: 'csec' };
+  const clientConfig = { client_id: 'cid', client_secret: 'csec' };
 
   test('uses client_credentials grant type', async () => {
     axios.post.mockResolvedValue({ data: { access_token: 'tok' } });

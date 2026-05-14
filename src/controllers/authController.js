@@ -22,7 +22,7 @@ exports.startAuth = (req, res, type) => {
     req.session.authServer = 'serverTwo';
   } else if (type === 'three') {
     endpoint = authConfig.endpoints.authServerThree.authorizationEndpoint;
-    client = authConfig.clients.four;
+    client = authConfig.clients.three;
   } else if (type === 'reuse') {
     endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
     client = authConfig.clients.three;
@@ -77,6 +77,35 @@ exports.callback = async (req, res) => {
           res.attachment("report.xlsx");
           return res.send(report);
         }
+        res.render("clientindex", { access_token: tokenData.access_token });
+      } catch (innerErr) {
+        handleAxiosError(innerErr, res, "Callback");
+      }
+    });
+  } catch (err) {
+    handleAxiosError(err, res, "Callback");
+  }
+};
+
+exports.callbackClientCreds = async (req, res) => {
+  const { error } = req.query;
+  if (error) return res.render("error", { error: "Authorization error" });
+
+  try {
+    const endpoint = authConfig.endpoints.authServerThree.tokenEndpoint;
+
+    const clientKey = req.session.oauthClientKey || 'three';
+    const client = authConfig.clients[clientKey];
+
+    const tokenData = await sfService.getTokenClientCreds(endpoint, client);
+
+    // Regenerate session after login to prevent session fixation
+    req.session.regenerate(async (err) => {
+      if (err) return res.render("error", { error: "Session error" });
+      req.session.accessToken = tokenData.access_token;
+      req.session.instanceUrl = tokenData.instance_url;
+
+      try {
         res.render("clientindex", { access_token: tokenData.access_token });
       } catch (innerErr) {
         handleAxiosError(innerErr, res, "Callback");

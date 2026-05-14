@@ -84,10 +84,10 @@ describe('startAuth', () => {
     );
   });
 
-  test('type "three" — uses client four (oauthClientKey is "four")', () => {
+  test('type "three" — uses client three (oauthClientKey is "three")', () => {
     const req = mockReq();
     authController.startAuth(req, mockRes(), 'three');
-    expect(req.session.oauthClientKey).toBe('four');
+    expect(req.session.oauthClientKey).toBe('three');
   });
 
   test('type "three" — uses client_credentials response_type', () => {
