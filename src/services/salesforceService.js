@@ -31,8 +31,6 @@ exports.getTokenClientCreds = async (endpoint, clientConfig) => {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     timeout: TIMEOUT
   });
-  // TODO Remove
-  console.log(response.data);
   return response.data;
 };
 
