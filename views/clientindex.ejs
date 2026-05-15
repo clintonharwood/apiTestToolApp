@@ -13,7 +13,7 @@
 <ul class="tool-list">
   <li><a href="/authorizeOne">Get OAuth Token CD</a></li>
   <li><a href="/authorizeTwo">Get OAuth Token ES</a></li>
-  <li><a href="/authorizeThree">Get Client Credentials Token</a></li>
+  <% if (clientCredsEnabled) { %><li><a href="/authorizeThree">Get Client Credentials Token</a></li><% } %>
   <li><a href="/authorizeReuse">Reuse Auth Code</a></li>
   <li><a href="/authorizeCodeCredsFlow">Headless Identity — Auth Code &amp; Credentials Flow</a></li>
   <li><a href="/revokeOAuthToken">Revoke OAuth Token</a></li>

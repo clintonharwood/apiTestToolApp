@@ -51,6 +51,12 @@ app.get("/favicon.ico", (req, res) => {
   res.sendFile(path.resolve(__dirname, "src/images/favicon.ico"));
 });
 
+// Feature flags
+app.use((req, res, next) => {
+  res.locals.clientCredsEnabled = process.env.DISABLE_CLIENT_CREDENTIALS !== 'true';
+  next();
+});
+
 // Routes
 app.use("/", routes);
 
