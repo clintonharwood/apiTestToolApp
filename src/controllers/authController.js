@@ -28,7 +28,7 @@ exports.startAuth = (req, res, type) => {
     client = authConfig.clients.three;
   } else if (type === 'authServer') {
     endpoint = authConfig.endpoints.salesforceAuthServer.authorizationEndpoint
-    client = authConfig.clients.two;
+    client = authConfig.clients.one;
     req.session.authServer = 'authServer';
   } else {
     req.session.authServer = 'serverOne';
