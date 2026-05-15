@@ -89,7 +89,7 @@ exports.callback = async (req, res) => {
 
 exports.startClientCredentialsFlow = async (req, res) => {
   try {
-    const endpoint = authConfig.endpoints.authServerThree.tokenEndpoint;
+    const endpoint = authConfig.endpoints.salesforceAuthServer.tokenEndpoint;
     const client = authConfig.clients['three'];
 
     const tokenData = await sfService.getTokenClientCreds(endpoint, client);
