@@ -87,31 +87,21 @@ exports.callback = async (req, res) => {
   }
 };
 
-exports.callbackClientCreds = async (req, res) => {
-  const { error } = req.query;
-  if (error) return res.render("error", { error: "Authorization error" });
-
+exports.startClientCredentialsFlow = async (req, res) => {
   try {
     const endpoint = authConfig.endpoints.authServerThree.tokenEndpoint;
-
-    const clientKey = req.session.oauthClientKey || 'three';
-    const client = authConfig.clients[clientKey];
+    const client = authConfig.clients['three'];
 
     const tokenData = await sfService.getTokenClientCreds(endpoint, client);
 
     // Regenerate session after login to prevent session fixation
-    req.session.regenerate(async (err) => {
+    req.session.regenerate((err) => {
       if (err) return res.render("error", { error: "Session error" });
       req.session.accessToken = tokenData.access_token;
       req.session.instanceUrl = tokenData.instance_url;
-
-      try {
-        res.render("clientindex", { access_token: tokenData.access_token });
-      } catch (innerErr) {
-        handleAxiosError(innerErr, res, "Callback");
-      }
+      res.render("clientindex", { access_token: tokenData.access_token });
     });
   } catch (err) {
-    handleAxiosError(err, res, "Callback");
+    handleAxiosError(err, res, "Client Credentials");
   }
 };

@@ -1,7 +1,7 @@
 jest.mock('../../src/controllers/authController', () => ({
   startAuth: jest.fn(),
   callback: jest.fn(),
-  callbackClientCreds: jest.fn(),
+  startClientCredentialsFlow: jest.fn(),
 }));
 
 const mockNext = jest.fn();
@@ -58,22 +58,13 @@ describe('requireClientCredsEnabled middleware', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  test('same guard is used on /callbackclientcredsflow', () => {
+  test('/callbackclientcredsflow route does not exist (client credentials has no redirect callback)', () => {
     jest.resetModules();
     const router = require('../../src/routes/auth');
     const layer = router.stack.find(
       l => l.route && l.route.path === '/callbackclientcredsflow'
     );
-    // Verify the route has more than one handler (guard + controller)
-    expect(layer.route.stack.length).toBeGreaterThan(1);
-
-    process.env.DISABLE_CLIENT_CREDENTIALS = 'true';
-    const guard = layer.route.stack[0].handle;
-    const next = jest.fn();
-    const res = mockRes();
-    guard(mockReq(), res, next);
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(next).not.toHaveBeenCalled();
+    expect(layer).toBeUndefined();
   });
 
   test('other routes do not have the guard (authorizeone has one handler)', () => {
