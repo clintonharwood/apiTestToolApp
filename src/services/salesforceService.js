@@ -34,9 +34,10 @@ exports.getTokenClientCreds = async (endpoint, clientConfig) => {
   return response.data;
 };
 
-exports.publishPlatformEvent = async (accessToken, eventData) => {
+exports.publishPlatformEvent = async (accessToken) => {
   const url = "https://clintoxsupport.my.salesforce.com/services/data/v63.0/sobjects/Clintox_Test_Event__e/";
-  const response = await axios.post(url, eventData, {
+  const data = { Order_id__c: "123456" };
+  const response = await axios.post(url, data, {
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + accessToken,

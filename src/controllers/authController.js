@@ -3,7 +3,7 @@ const authConfig = require("../config/authConfig");
 const { buildUrl, handleAxiosError } = require("../utils/helpers");
 const sfService = require("../services/salesforceService");
 
-const VALID_TYPES = ['one', 'two', 'three', 'reuse'];
+const VALID_TYPES = ['one', 'two', 'three', 'reuse', 'authServer'];
 
 // Start Auth Flow
 exports.startAuth = (req, res, type) => {
@@ -26,6 +26,10 @@ exports.startAuth = (req, res, type) => {
   } else if (type === 'reuse') {
     endpoint = authConfig.endpoints.authServerTwo.authorizationEndpoint;
     client = authConfig.clients.three;
+  } else if (type === 'authServer') {
+    endpoint = authConfig.endpoints.salesforceAuthServer.authorizationEndpoint
+    client = authConfig.clients.two;
+    req.session.authServer = 'authServer';
   } else {
     req.session.authServer = 'serverOne';
   }
@@ -54,7 +58,7 @@ exports.callback = async (req, res) => {
 
   try {
     const isServerOne = req.session.authServer === 'serverOne';
-    const endpoint = isServerOne ? authConfig.endpoints.authServerOne.tokenEndpoint : authConfig.endpoints.authServerTwo.tokenEndpoint;
+    const endpoint = isServerOne ? authConfig.endpoints.authServerOne.tokenEndpoint : req.session.authServer === 'authServer' ? authConfig.endpoints.salesforceAuthServer.tokenEndpoint : authConfig.endpoints.authServerTwo.tokenEndpoint;
 
     const clientKey = req.session.oauthClientKey || 'one';
     const client = authConfig.clients[clientKey];
@@ -76,6 +80,9 @@ exports.callback = async (req, res) => {
           const report = await sfService.downloadReport(tokenData.access_token);
           res.attachment("report.xlsx");
           return res.send(report);
+        } else if (action === 'platformEvent') {
+          const platformEvent = await sfService.publishPlatformEvent(tokenData.access_token);
+          return res.render("platformEvent", { pe_response: JSON.stringify(platformEvent) });
         }
         res.render("clientindex", { access_token: tokenData.access_token });
       } catch (innerErr) {

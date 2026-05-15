@@ -32,6 +32,9 @@ router.get("/downloadReport", (req, res) => {
   res.redirect('/authorizetwo');
 });
 // TODO impl
-router.get("/publishPlatfromEvent", (req, res) => authController.startAuth(req, res, 'reuse'));
+router.get("/publishPlatfromEvent", (req, res) => {
+  req.session.action = 'platformEvent';
+  authController.startAuth(req, res, 'authServer');
+});
 
 module.exports = router;
