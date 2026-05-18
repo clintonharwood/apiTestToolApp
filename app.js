@@ -46,6 +46,9 @@ app.use(session({
   cookie: { secure: true, httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
 
+// Static assets
+app.use(express.static(path.join(__dirname, "public")));
+
 // Serve favicon
 app.get("/favicon.ico", (req, res) => {
   res.sendFile(path.resolve(__dirname, "src/images/favicon.ico"));

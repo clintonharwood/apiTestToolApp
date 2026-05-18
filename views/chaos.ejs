@@ -13,7 +13,7 @@
   <button id="runBtn" class="btn btn-primary" <%= !hasToken ? 'disabled' : '' %>>
     Run Chaos Probes
   </button>
-  <span id="spinner" class="d-none d-flex align-items-center gap-2" style="color: var(--muted); font-size: 0.875rem;">
+  <span id="spinner" class="d-none d-flex align-items-center gap-2 text-secondary text-sm">
     <span class="spinner-border text-secondary" role="status"></span>
     Running 6 probes&hellip;
   </span>
@@ -54,8 +54,8 @@
       const failed = total - passed;
 
       summaryEl.innerHTML = `
-        <span style="color: var(--muted);">${total} probes run</span>
-        <span style="color: var(--muted);">&middot;</span>
+        <span class="text-secondary">${total} probes run</span>
+        <span class="text-secondary">&middot;</span>
         <span class="badge badge-pass">${passed} PASS</span>
         <span class="badge badge-fail">${failed} FAIL</span>`;
       summaryEl.classList.remove('d-none');
@@ -76,7 +76,7 @@
               </div>
               <div class="d-flex gap-2 mb-2">
                 <span class="badge bg-secondary">HTTP ${escHtml(String(r.status))}</span>
-                <span class="badge" style="background: var(--surface-hover); border: 1px solid var(--border); color: var(--muted);">${escHtml(String(r.ms))} ms</span>
+                <span class="badge badge-neutral">${escHtml(String(r.ms))} ms</span>
               </div>
               <pre>${escHtml(JSON.stringify(r.body, null, 2))}</pre>
             </div>
