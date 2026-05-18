@@ -25,7 +25,7 @@ router.get("/callbackreuse", authController.callback);
 
 router.get("/createaccount", (req, res) => {
   req.session.action = 'createAccount';
-  res.redirect('/authorizetwo');
+  authController.startAuth(req, res, 'authServer');
 });
 router.get("/downloadReport", (req, res) => {
   req.session.action = 'report';
