@@ -29,7 +29,7 @@ router.get("/createaccount", (req, res) => {
 });
 router.get("/downloadReport", (req, res) => {
   req.session.action = 'report';
-  res.redirect('/authorizetwo');
+  authController.startAuth(req, res, 'authServer');
 });
 // TODO impl
 router.get("/publishPlatfromEvent", (req, res) => {
