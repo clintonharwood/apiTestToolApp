@@ -16,7 +16,7 @@
   <c-lightning-out-two-wrapper header-title="Hello from <%= user.name %>!"></c-lightning-out-two-wrapper>
 </div>
 
-<script>
+<script nonce="<%= cspNonce %>">
   const loApp = document.getElementById('mySalesforceApp');
 
   loApp.addEventListener('onready', () => {
