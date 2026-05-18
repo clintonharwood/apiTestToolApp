@@ -12,6 +12,8 @@
   </div>
 <% } %>
 
-<a href="/publishPlatfromEvent" class="btn btn-primary">Publish Test Event</a>
+<% if (!pe_response) { %>
+  <a href="/publishPlatfromEvent" class="btn btn-primary">Publish Test Event</a>
+<% } %>
 
 <%- include('partials/_foot') %>
