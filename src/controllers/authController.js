@@ -77,9 +77,7 @@ exports.callback = async (req, res) => {
           const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
           return res.render("createaccountui", { result: JSON.stringify(acc) });
         } else if (action === 'report') {
-          const report = await sfService.downloadReport(tokenData.access_token);
-          res.attachment("report.xlsx");
-          return res.send(report);
+          return res.redirect('/serveReport');
         } else if (action === 'platformEvent') {
           const platformEvent = await sfService.publishPlatformEvent(tokenData.access_token);
           return res.render("platformEvent", { pe_response: JSON.stringify(platformEvent) });
@@ -91,6 +89,26 @@ exports.callback = async (req, res) => {
     });
   } catch (err) {
     handleAxiosError(err, res, "Callback");
+  }
+};
+
+exports.serveReportPage = (req, res) => {
+  if (!req.session.accessToken) {
+    return res.render('error', { error: 'No active session. Please re-authenticate.' });
+  }
+  res.render('reportDownload');
+};
+
+exports.serveReportDownload = async (req, res) => {
+  if (!req.session.accessToken) {
+    return res.status(401).json({ error: 'No active session' });
+  }
+  try {
+    const report = await sfService.downloadReport(req.session.accessToken);
+    res.attachment('report.xlsx');
+    res.send(report);
+  } catch (err) {
+    handleAxiosError(err, res, 'Report Download');
   }
 };
 

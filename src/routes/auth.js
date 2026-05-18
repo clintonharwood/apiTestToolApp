@@ -31,6 +31,8 @@ router.get("/downloadReport", (req, res) => {
   req.session.action = 'report';
   authController.startAuth(req, res, 'authServer');
 });
+router.get("/serveReport", authController.serveReportPage);
+router.get("/serveReport/download", authController.serveReportDownload);
 // TODO impl
 router.get("/publishPlatfromEvent", (req, res) => {
   req.session.action = 'platformEvent';

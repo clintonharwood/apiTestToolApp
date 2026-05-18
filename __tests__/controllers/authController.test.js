@@ -193,10 +193,8 @@ describe('callback', () => {
     }));
   });
 
-  test('downloadReport flow — sets attachment and sends report data', async () => {
-    const reportData = Buffer.from('fakexlsx');
+  test('downloadReport flow — redirects to /serveReport', async () => {
     sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
-    sfService.downloadReport.mockResolvedValue(reportData);
     const req = mockReq({
       session: { oauthState: 'st', action: 'report', oauthClientKey: 'one' },
       query: { code: 'code', state: 'st' }
@@ -205,8 +203,7 @@ describe('callback', () => {
 
     await authController.callback(req, res);
 
-    expect(res.attachment).toHaveBeenCalledWith('report.xlsx');
-    expect(res.send).toHaveBeenCalledWith(reportData);
+    expect(res.redirect).toHaveBeenCalledWith('/serveReport');
   });
 
   test('calls handleAxiosError when service throws', async () => {

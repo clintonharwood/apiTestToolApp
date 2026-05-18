@@ -1,0 +1,39 @@
+<%- include('partials/_head', { title: 'Report Download — Clintox' }) %>
+
+<div class="page-header">
+  <h1>Report Download</h1>
+</div>
+
+<div class="card mt-3" id="status-card">
+  <div class="card-body">
+    <p id="status-msg">Preparing your report&hellip;</p>
+  </div>
+</div>
+
+<iframe id="dl-frame" src="/serveReport/download" style="display:none"></iframe>
+
+<script nonce="<%= cspNonce %>">
+  const frame = document.getElementById('dl-frame');
+  const msg = document.getElementById('status-msg');
+  const card = document.getElementById('status-card');
+
+  frame.addEventListener('load', function () {
+    try {
+      const body = frame.contentDocument && frame.contentDocument.body.innerText;
+      if (body && body.trim().length > 0) {
+        msg.textContent = 'Download failed. The server returned an error.';
+        card.classList.add('alert-danger');
+        return;
+      }
+    } catch (e) { /* cross-origin or binary — treat as success */ }
+    msg.textContent = 'Your report has been downloaded successfully.';
+    card.classList.add('alert-success');
+  });
+
+  frame.addEventListener('error', function () {
+    msg.textContent = 'Download failed. Please try again.';
+    card.classList.add('alert-danger');
+  });
+</script>
+
+<%- include('partials/_foot') %>

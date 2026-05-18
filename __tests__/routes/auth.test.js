@@ -2,6 +2,8 @@ jest.mock('../../src/controllers/authController', () => ({
   startAuth: jest.fn(),
   callback: jest.fn(),
   startClientCredentialsFlow: jest.fn(),
+  serveReportPage: jest.fn(),
+  serveReportDownload: jest.fn(),
 }));
 
 const mockNext = jest.fn();
