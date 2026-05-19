@@ -108,3 +108,29 @@ exports.headlessPasswordSet = async (username, otp, password, recaptcha) => {
   );
   return response.data;
 };
+
+exports.webToCase = async () => {
+  const requestBody = {
+    orgid: '00D5j00000CvOSL',
+		name: 'Donald',
+		email: 'clinto_is@hotmail.com',
+		phone: '0432202726',
+		subject: 'Help Me with clintox website',
+		description: 'Getting an ISE'
+  }
+
+  const response = await axios.post(
+    `https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&debug=1&debugEmail=clinto_is%40hotmail.com`,
+    qs.stringify(requestBody),
+    {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        timeout: TIMEOUT
+    }
+  );
+
+  //requestModule.get('https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&orgid=00D5j00000CvOSL&retURL=http%3A%2F%2F&name=Donald&email=clinto_is%40hotamil.com&phone=0323202928&subject=Test&description=Test&submit=Submit&debug=1&debugEmail=clinto_is%40hotmail.com');
+  
+  return response.data;
+}

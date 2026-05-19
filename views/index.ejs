@@ -7,7 +7,7 @@
 
 <ul class="tool-list">
   <li><a href="/auth">OAuth Test</a></li>
-  <li><a href="/webtocase">Web To Case Test</a></li>
+  <% if (webToCaseEnabled) { %><li><a href="/webtocase">Web To Case Test</a></li><% } %>
   <li><a href="/casedetailsvfpage">iframe VF Page Test</a></li>
   <li><a href="/createaccount">Salesforce REST API — Create Account</a></li>
   <li><a href="/downloadReport">Download Salesforce Report</a></li>

@@ -135,6 +135,39 @@ describe('headlessPasswordReset', () => {
   });
 });
 
+describe('webToCase', () => {
+  test('posts to the Salesforce Web-to-Case URL', async () => {
+    axios.post.mockResolvedValue({ data: 'ok' });
+    await sfService.webToCase();
+
+    const url = axios.post.mock.calls[0][0];
+    expect(url).toContain('webto.salesforce.com/servlet/servlet.WebToCase');
+  });
+
+  test('sends form-encoded body', async () => {
+    axios.post.mockResolvedValue({ data: 'ok' });
+    await sfService.webToCase();
+
+    const headers = axios.post.mock.calls[0][2].headers;
+    expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+
+    const body = axios.post.mock.calls[0][1];
+    expect(typeof body).toBe('string');
+    expect(body).toContain('orgid=');
+  });
+
+  test('returns response data', async () => {
+    axios.post.mockResolvedValue({ data: '<html>success</html>' });
+    const result = await sfService.webToCase();
+    expect(result).toBe('<html>success</html>');
+  });
+
+  test('propagates axios errors', async () => {
+    axios.post.mockRejectedValue(new Error('network error'));
+    await expect(sfService.webToCase()).rejects.toThrow('network error');
+  });
+});
+
 describe('headlessPasswordSet', () => {
   test('posts all four fields in request body', async () => {
     axios.post.mockResolvedValue({ data: {} });

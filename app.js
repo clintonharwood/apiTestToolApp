@@ -57,6 +57,7 @@ app.get("/favicon.ico", (req, res) => {
 // Feature flags
 app.use((req, res, next) => {
   res.locals.clientCredsEnabled = process.env.DISABLE_CLIENT_CREDENTIALS !== 'true';
+  res.locals.webToCaseEnabled   = process.env.DISABLE_WEB_TO_CASE !== 'true';
   next();
 });
 
