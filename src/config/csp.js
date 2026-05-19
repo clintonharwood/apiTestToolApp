@@ -11,7 +11,8 @@ module.exports = (nonce) => helmet({
           "https://devorg0923com-dev-ed.develop.lightning.force.com",
           "https://www.google.com",
           "https://clintoxsupport.my.salesforce.com",
-          "https://clintoxsupport.file.force.com"
+          "https://clintoxsupport.file.force.com",
+          "https://clintox.xyz/serveReport/download"
         ],
         scriptSrc: [
           "'self'",
