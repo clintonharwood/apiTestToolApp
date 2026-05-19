@@ -10,30 +10,35 @@
   </div>
 </div>
 
-<iframe id="dl-frame" src="/serveReport/download" class="d-none"></iframe>
-
 <script nonce="<%= cspNonce %>">
-  const frame = document.getElementById('dl-frame');
   const msg = document.getElementById('status-msg');
   const card = document.getElementById('status-card');
 
-  frame.addEventListener('load', function () {
-    try {
-      const body = frame.contentDocument && frame.contentDocument.body.innerText;
-      if (body && body.trim().length > 0) {
-        msg.textContent = 'Download failed. The server returned an error.';
-        card.classList.add('alert-danger');
-        return;
+  fetch('/serveReport/download')
+    .then(function (res) {
+      if (!res.ok) {
+        return res.text().then(function (text) {
+          throw new Error(text || 'Server error');
+        });
       }
-    } catch (e) { /* cross-origin or binary — treat as success */ }
-    msg.textContent = 'Your report has been downloaded successfully.';
-    card.classList.add('alert-success');
-  });
-
-  frame.addEventListener('error', function () {
-    msg.textContent = 'Download failed. Please try again.';
-    card.classList.add('alert-danger');
-  });
+      return res.blob();
+    })
+    .then(function (blob) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'report.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      msg.textContent = 'Your report has been downloaded successfully.';
+      card.classList.add('alert-success');
+    })
+    .catch(function () {
+      msg.textContent = 'Download failed. Please try again.';
+      card.classList.add('alert-danger');
+    });
 </script>
 
 <%- include('partials/_foot') %>
