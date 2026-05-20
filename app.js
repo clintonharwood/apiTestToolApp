@@ -20,6 +20,14 @@ const PORT = process.env.PORT || 3003;
 // Trust Heroku's TLS-terminating proxy so secure cookies work
 app.set("trust proxy", 1);
 
+// Redirect HTTP → HTTPS (Heroku terminates TLS, so check the forwarded proto)
+app.use((req, res, next) => {
+  if (req.headers["x-forwarded-proto"] === "http") {
+    return res.redirect(301, `https://${req.headers.host}${req.originalUrl}`);
+  }
+  next();
+});
+
 // View Engine
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
