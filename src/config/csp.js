@@ -33,8 +33,7 @@ module.exports = (nonce) => helmet({
         ],
         imgSrc: [
           "'self'",
-          "https://upload.wikimedia.org",
-          "https://www.googletagmanager.com"
+"https://www.googletagmanager.com"
         ],
         connectSrc: [
           "'self'",
