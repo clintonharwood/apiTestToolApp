@@ -134,3 +134,17 @@ exports.webToCase = async () => {
   
   return response.data;
 }
+
+exports.runSoqlQuery = async (accessToken, instanceUrl, query) => {
+  const response = await axios.get(
+      `${instanceUrl}/services/data/v60.0/query?q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        timeout: TIMEOUT
+      }
+  );
+  return response.data;
+}
