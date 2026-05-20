@@ -27,23 +27,25 @@
     <%
       const cols = Object.keys(results[0]).filter(k => k !== 'attributes');
     %>
-    <div class="table-responsive mb-4">
-      <table class="table table-sm table-bordered">
-        <thead>
-          <tr>
-            <% cols.forEach(col => { %><th><%= col %></th><% }); %>
-          </tr>
-        </thead>
-        <tbody>
-          <% results.forEach(record => { %>
+    <div class="card mb-4">
+      <div class="card-body p-0">
+        <table class="endpoint-table">
+          <thead>
             <tr>
-              <% cols.forEach(col => { %>
-                <td><%= (record[col] !== null && typeof record[col] === 'object') ? JSON.stringify(record[col]) : record[col] %></td>
-              <% }); %>
+              <% cols.forEach(col => { %><th><%= col %></th><% }); %>
             </tr>
-          <% }); %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% results.forEach(record => { %>
+              <tr>
+                <% cols.forEach(col => { %>
+                  <td><%= (record[col] !== null && typeof record[col] === 'object') ? JSON.stringify(record[col]) : record[col] %></td>
+                <% }); %>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
     </div>
   <% } %>
 
@@ -51,7 +53,5 @@
     <pre class="bg-light p-3 border rounded"><%= rawJson %></pre>
   <% } %>
 <% } %>
-
-<a href="/" class="btn btn-outline-secondary mt-2">Back to Dashboard</a>
 
 <%- include('partials/_foot') %>
