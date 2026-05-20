@@ -13,9 +13,10 @@ router.get("/authorizeone", (req, res) => authController.startAuth(req, res, 'on
 router.get("/authorizetwo", (req, res) => authController.startAuth(req, res, 'two'));
 router.get("/authorizethree", requireClientCredsEnabled, (req, res) => authController.startClientCredentialsFlow(req, res));
 router.get("/authorizereuse", (req, res) => authController.startAuth(req, res, 'reuse'));
+router.get("/webserverflow", (req, res) => authController.startAuth(req, res, 'authServer'));
 // TODO impl
-router.get("/authorizeCodeCredsFlow", (req, res) => authController.startAuth(req, res, 'reuse'));
-router.get("/revokeOAuthToken", (req, res) => authController.startAuth(req, res, 'reuse'));
+router.get("/authorizecodecredsflow", (req, res) => authController.startAuth(req, res, 'reuse'));
+router.get("/revokeoauthtoken", (req, res) => authController.startAuth(req, res, 'reuse'));
 
 router.get("/callback", authController.callback);
 router.get("/callbacknoncommunity", authController.callback);
