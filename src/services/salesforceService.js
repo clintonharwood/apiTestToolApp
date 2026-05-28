@@ -148,3 +148,17 @@ exports.runSoqlQuery = async (accessToken, instanceUrl, query) => {
   );
   return response.data;
 }
+
+exports.testConnectivity = async (tokenEndpoint, clientConfig, instanceUrl) => {
+  const tokenData = await exports.getTokenClientCreds(tokenEndpoint, clientConfig);
+  const queryData = await exports.runSoqlQuery(
+    tokenData.access_token,
+    instanceUrl,
+    'SELECT Id FROM User LIMIT 1'
+  );
+  return {
+    tokenAcquired: true,
+    recordCount: queryData.totalSize,
+    instanceUrl,
+  };
+};
