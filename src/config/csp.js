@@ -3,6 +3,7 @@ const helmet = require("helmet");
 module.exports = (nonce) => helmet({
     contentSecurityPolicy: {
       directives: {
+        formAction: ["'self'"],
         frameSrc: [
           "https://test.clintox.xyz/",
           "https://clintoxsupport.my.salesforce-sites.com",

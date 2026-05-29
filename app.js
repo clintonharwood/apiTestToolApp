@@ -41,7 +41,6 @@ app.use((req, res, next) => {
 // Middleware
 app.use(logger("short"));
 app.use(cors({ origin: process.env.CORS_ORIGIN || "https://clintox.xyz", credentials: true }));
-app.use(helmet({ xFrameOptions: { action: "sameorigin" } }));
 app.use((req, res, next) => buildCspConfig(res.locals.cspNonce)(req, res, next));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
