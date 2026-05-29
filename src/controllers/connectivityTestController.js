@@ -5,10 +5,22 @@ const { buildUrl, handleAxiosError } = require('../utils/helpers');
 const INSTANCE_URL_PATTERN = /^https:\/\/[a-zA-Z0-9-]+\.(my\.salesforce|salesforce|force)\.com(\/|$)/;
 const REDIRECT_URI = 'https://clintox.xyz/callbackbyoca';
 
+/**
+ * Renders the connectivity test form page with no prior result or error.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.showPage = (req, res) => {
   res.render('connectivityTest', { result: null, error: null });
 };
 
+/**
+ * Validates the submitted instance URL, client ID, and client secret, then stores
+ * ephemeral OAuth credentials in the session and returns a redirect URL to the
+ * Salesforce authorization endpoint as JSON.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.runTest = (req, res) => {
   const { clientId, clientSecret, instanceUrl } = req.body;
 
@@ -41,6 +53,16 @@ exports.runTest = (req, res) => {
   });
 };
 
+/**
+ * Stores BYOCA OAuth credentials in the session and redirects to the given
+ * authorization endpoint to begin a bring-your-own-credentials OAuth flow.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {string} authorizationEndpoint - Full URL of the OAuth authorization endpoint
+ * @param {string} tokenEndpoint - Full URL of the OAuth token endpoint
+ * @param {string} normalizedUrl - Salesforce instance base URL (trailing slash removed)
+ * @param {{client_id: string, client_secret: string}} client - OAuth client credentials
+ */
 exports.startAuthByoca = (req, res, authorizationEndpoint, tokenEndpoint, normalizedUrl, client) => {
   const state = crypto.randomBytes(32).toString('hex');
   req.session.oauthState = state;
@@ -59,6 +81,13 @@ exports.startAuthByoca = (req, res, authorizationEndpoint, tokenEndpoint, normal
   res.redirect(url);
 };
 
+/**
+ * Handles the BYOCA OAuth callback. Validates CSRF state, reads ephemeral credentials
+ * from the session, regenerates the session (clearing any prior auth state), then runs
+ * the connectivity test and renders the result.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.callbackByoca = async (req, res) => {
   const { code, state, error } = req.query;
   if (error) return res.render('error', { error: 'Authorization error' });
@@ -79,10 +108,13 @@ exports.callbackByoca = async (req, res) => {
   delete req.session.byocaClientId;
   delete req.session.byocaClientSecret;
 
-  try {
-    const result = await salesforceService.testConnectivity(tokenEndpoint, ephemeralConfig, normalizedUrl, code);
-    return res.render('connectivityTest', { result, error: null });
-  } catch (err) {
-    return handleAxiosError(err, res, 'Connectivity test');
-  }
+  req.session.regenerate(async (err) => {
+    if (err) return res.render('error', { error: 'Session error' });
+    try {
+      const result = await salesforceService.testConnectivity(tokenEndpoint, ephemeralConfig, normalizedUrl, code);
+      return res.render('connectivityTest', { result, error: null });
+    } catch (innerErr) {
+      return handleAxiosError(innerErr, res, 'Connectivity test');
+    }
+  });
 };

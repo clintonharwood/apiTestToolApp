@@ -1,7 +1,16 @@
 const crypto = require("crypto");
 
+/** @returns {string} A randomly generated UUID v4. */
 const generateUUID = () => crypto.randomUUID();
 
+/**
+ * Constructs a URL from a base string, appending the given key-value pairs as query
+ * parameters and an optional hash fragment.
+ * @param {string} base - The base URL
+ * @param {Record<string, string>} options - Query parameters to append
+ * @param {string} [hash] - Optional hash fragment
+ * @returns {string} The fully constructed URL string
+ */
 const buildUrl = (base, options, hash) => {
   const u = new URL(base);
   Object.entries(options).forEach(([k, v]) => u.searchParams.set(k, v));
@@ -9,12 +18,26 @@ const buildUrl = (base, options, hash) => {
   return u.toString();
 };
 
+/**
+ * Base64-encodes a client ID and secret in the format required for HTTP Basic
+ * authentication headers (percent-encoded values separated by a colon).
+ * @param {string} clientId
+ * @param {string} clientSecret
+ * @returns {string} Base64-encoded credentials string
+ */
 const encodeClientCredentials = (clientId, clientSecret) => {
   return Buffer.from(
     encodeURIComponent(clientId) + ":" + encodeURIComponent(clientSecret)
   ).toString("base64");
 };
 
+/**
+ * Logs an Axios error and renders the error view with a user-friendly message.
+ * Use this as the catch handler for all Salesforce API calls.
+ * @param {import('axios').AxiosError} error
+ * @param {import('express').Response} res
+ * @param {string} [context] - Label shown in the log and error message (e.g. 'SOQL Runner')
+ */
 const handleAxiosError = (error, res, context = "Request") => {
   console.error(`${context} Failed: status=${error.response?.status} code=${error.response?.data?.[0]?.errorCode ?? error.response?.data?.errorCode ?? 'N/A'}`);
   res.render("error", { error: `${context} failed. Please try again.` });

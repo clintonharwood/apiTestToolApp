@@ -8,6 +8,13 @@ const authHeader = (token) => ({
   Authorization: 'Bearer ' + token,
 });
 
+/**
+ * Executes a single chaos probe function, captures its HTTP status, response body,
+ * elapsed time, and whether it passed or threw.
+ * @param {string} label - Human-readable name for the probe
+ * @param {() => Promise<import('axios').AxiosResponse>} fn - The axios call to execute
+ * @returns {Promise<{label: string, status: number|string, body: any, ms: number, passed: boolean}>}
+ */
 const probe = async (label, fn) => {
   const start = Date.now();
   try {
@@ -27,6 +34,13 @@ const probe = async (label, fn) => {
 
 const VALID_INSTANCE_URL = /^https:\/\/[a-zA-Z0-9-]+\.my\.salesforce\.com$/;
 
+/**
+ * Runs six chaos probes against the Salesforce Account sObject, each exercising a
+ * different invalid-input scenario (missing field, wrong type, oversized value, etc.).
+ * @param {string} accessToken - Salesforce Bearer token
+ * @param {string} instanceUrl - Salesforce instance base URL (e.g. https://org.my.salesforce.com)
+ * @returns {Promise<Array<{label: string, status: number|string, body: any, ms: number, passed: boolean}>>}
+ */
 exports.runProbes = async (accessToken, instanceUrl) => {
   if (!VALID_INSTANCE_URL.test(instanceUrl)) {
     throw new Error('Invalid instance URL');

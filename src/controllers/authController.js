@@ -5,7 +5,14 @@ const sfService = require("../services/salesforceService");
 
 const VALID_TYPES = ['one', 'two', 'three', 'reuse', 'authServer'];
 
-// Start Auth Flow
+/**
+ * Initiates the OAuth authorization code flow for the specified client type.
+ * Stores CSRF state and client key in the session, then redirects to the
+ * appropriate authorization endpoint.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {'one'|'two'|'three'|'reuse'|'authServer'} type - Selects the OAuth client and auth server to use
+ */
 exports.startAuth = (req, res, type) => {
   if (!VALID_TYPES.includes(type)) {
     return res.status(400).render('error', { error: 'Invalid auth type' });
@@ -48,7 +55,13 @@ exports.startAuth = (req, res, type) => {
   res.redirect(url);
 };
 
-// Callback Handler
+/**
+ * Handles the OAuth authorization code callback. Validates the CSRF state,
+ * exchanges the code for tokens, regenerates the session, and either performs an
+ * action (createAccount, report, platformEvent) or renders the main client page.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.callback = async (req, res) => {
   const { code, state, error } = req.query;
   if (error) return res.render("error", { error: "Authorization error" });
@@ -92,6 +105,12 @@ exports.callback = async (req, res) => {
   }
 };
 
+/**
+ * Renders the report download page. Requires an active session token; returns
+ * an error view if no token is present.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.serveReportPage = (req, res) => {
   if (!req.session.accessToken) {
     return res.render('error', { error: 'No active session. Please re-authenticate.' });
@@ -99,6 +118,12 @@ exports.serveReportPage = (req, res) => {
   res.render('reportDownload');
 };
 
+/**
+ * Streams a Salesforce report as an Excel file download. Requires an active session
+ * token; returns 401 JSON if no token is present.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.serveReportDownload = async (req, res) => {
   if (!req.session.accessToken) {
     return res.status(401).json({ error: 'No active session' });
@@ -112,6 +137,12 @@ exports.serveReportDownload = async (req, res) => {
   }
 };
 
+/**
+ * Initiates the OAuth client credentials flow, acquires a token directly (no user
+ * redirect), regenerates the session, and renders the main client page.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.startClientCredentialsFlow = async (req, res) => {
   try {
     const endpoint = authConfig.endpoints.salesforceAuthServer.tokenEndpoint;

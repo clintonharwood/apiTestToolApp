@@ -3,6 +3,11 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const connectivityTestController = require("../controllers/connectivityTestController");
 
+/**
+ * Middleware that blocks the client credentials OAuth flow when the
+ * DISABLE_CLIENT_CREDENTIALS env var is set to 'true'.
+ * @type {import('express').RequestHandler}
+ */
 const requireClientCredsEnabled = (req, res, next) => {
   if (process.env.DISABLE_CLIENT_CREDENTIALS === 'true') {
     return res.status(403).render('error', { error: 'Client credentials flow is currently disabled.' });

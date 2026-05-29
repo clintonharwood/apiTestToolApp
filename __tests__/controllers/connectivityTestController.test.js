@@ -83,7 +83,10 @@ describe('runTest', () => {
 });
 
 describe('callbackByoca', () => {
-  const buildReq = (query = {}, session = {}) => ({ query, session });
+  const buildReq = (query = {}, session = {}) => ({
+    query,
+    session: { regenerate: jest.fn((cb) => cb(null)), ...session },
+  });
 
   test('renders error when authorization error in query', async () => {
     const res = mockRes();
@@ -120,11 +123,25 @@ describe('callbackByoca', () => {
     );
     expect(sfService.testConnectivity).toHaveBeenCalledWith(
       'https://myorg.my.salesforce.com/services/oauth2/token',
-      { client_id: 'cid', client_secret: 'csec', redirect_uris: ['https://clintox.xyz/auth/callbackbyoca'] },
+      { client_id: 'cid', client_secret: 'csec', redirect_uris: ['https://clintox.xyz/callbackbyoca'] },
       'https://myorg.my.salesforce.com',
       'authcode'
     );
     expect(res.render).toHaveBeenCalledWith('connectivityTest', { result, error: null });
+  });
+
+  test('regenerates session to clear any prior auth state', async () => {
+    sfService.testConnectivity.mockResolvedValue({ tokenAcquired: true, recordCount: 1, instanceUrl: 'https://myorg.my.salesforce.com' });
+    const session = {
+      oauthState: 'abc123',
+      byocaTokenEndpoint: 'https://myorg.my.salesforce.com/services/oauth2/token',
+      byocaInstanceUrl: 'https://myorg.my.salesforce.com',
+      byocaClientId: 'cid',
+      byocaClientSecret: 'csec',
+    };
+    const req = buildReq({ code: 'authcode', state: 'abc123' }, session);
+    await connectivityTestController.callbackByoca(req, mockRes());
+    expect(req.session.regenerate).toHaveBeenCalled();
   });
 
   test('clears byoca session keys after callback', async () => {
@@ -136,14 +153,12 @@ describe('callbackByoca', () => {
       byocaClientId: 'cid',
       byocaClientSecret: 'csec',
     };
-    await connectivityTestController.callbackByoca(
-      buildReq({ code: 'authcode', state: 'abc123' }, session),
-      mockRes()
-    );
-    expect(session.byocaTokenEndpoint).toBeUndefined();
-    expect(session.byocaInstanceUrl).toBeUndefined();
-    expect(session.byocaClientId).toBeUndefined();
-    expect(session.byocaClientSecret).toBeUndefined();
+    const req = buildReq({ code: 'authcode', state: 'abc123' }, session);
+    await connectivityTestController.callbackByoca(req, mockRes());
+    expect(req.session.byocaTokenEndpoint).toBeUndefined();
+    expect(req.session.byocaInstanceUrl).toBeUndefined();
+    expect(req.session.byocaClientId).toBeUndefined();
+    expect(req.session.byocaClientSecret).toBeUndefined();
   });
 
   test('calls handleAxiosError on service failure', async () => {

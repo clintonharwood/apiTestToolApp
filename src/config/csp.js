@@ -1,5 +1,11 @@
 const helmet = require("helmet");
 
+/**
+ * Returns a configured Helmet Content Security Policy middleware for the given
+ * per-request nonce. The nonce must be included in any inline scripts or styles.
+ * @param {string} nonce - The CSP nonce generated for this request
+ * @returns {import('express').RequestHandler} Helmet CSP middleware
+ */
 module.exports = (nonce) => helmet({
     contentSecurityPolicy: {
       directives: {

@@ -3,6 +3,12 @@ const sfService = require("../services/salesforceService");
 
 const isString = (v) => typeof v === 'string';
 
+/**
+ * Validates the username and captcha token, then initiates a headless password reset
+ * on the Experience Cloud portal.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.forgotPassword = async (req, res) => {
   const { username, captchaToken } = req.body;
   if (!isString(username) || username.length === 0 || username.length > 200) {
@@ -19,6 +25,12 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+/**
+ * Validates username, OTP, new password strength, and recaptcha, then sets the new
+ * password on the Experience Cloud portal via the headless identity API.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.newPassword = async (req, res) => {
   const { username, otp, newpassword, recaptcha } = req.body;
   if (!isString(username) || username.length === 0 || username.length > 200) {

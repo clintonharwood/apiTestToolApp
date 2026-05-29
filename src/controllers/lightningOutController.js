@@ -4,6 +4,12 @@ const { handleAxiosError } = require("../utils/helpers");
 
 const ALLOWED_SF_HOSTNAMES = /^[a-zA-Z0-9-]+\.(my\.salesforce\.com|my\.site\.com|force\.com|salesforce-sites\.com)$/;
 
+/**
+ * Generates an OAuth CSRF state token, stores it in the session, and redirects to the
+ * Salesforce authorization endpoint to begin the Lightning Out OAuth flow.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.renderLwc = (req, res) => {
     const state = crypto.randomBytes(32).toString('hex');
     req.session.lightningOutState = state;
@@ -16,6 +22,13 @@ exports.renderLwc = (req, res) => {
     res.redirect(authUrl);
 };
 
+/**
+ * Handles the Lightning Out OAuth callback: validates CSRF state, exchanges the
+ * authorization code for a token, fetches a frontdoor URL, validates its hostname,
+ * regenerates the session, and renders the Lightning Out component page.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
 exports.callback = async (req, res) => {
     const { code, state } = req.query;
 
