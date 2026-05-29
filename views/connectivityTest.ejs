@@ -15,7 +15,7 @@
 <% } %>
 
 <% if (!result) { %>
-  <div id="formError" class="alert alert-danger mb-3" role="alert" style="display:none"></div>
+  <div id="formError" class="alert alert-danger mb-3 d-none" role="alert"></div>
   <form class="mb-4" id="testForm">
     <div class="mb-3">
       <label for="instanceUrl" class="form-label">Salesforce Instance URL</label>
@@ -39,7 +39,7 @@
       e.preventDefault();
       var btn = document.getElementById('submitBtn');
       var errorDiv = document.getElementById('formError');
-      errorDiv.style.display = 'none';
+      errorDiv.classList.add('d-none');
       btn.disabled = true;
       btn.textContent = 'Running…';
 
@@ -56,7 +56,7 @@
             window.location.href = data.redirectUrl;
           } else {
             errorDiv.textContent = data.error || 'An unexpected error occurred.';
-            errorDiv.style.display = '';
+            errorDiv.classList.remove('d-none');
             btn.disabled = false;
             btn.textContent = 'Run Test';
           }
