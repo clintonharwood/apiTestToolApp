@@ -8,7 +8,7 @@ const TIMEOUT = 15000;
  * code grant type.
  * @param {string} code - The authorization code from the OAuth callback
  * @param {string} endpoint - Token endpoint URL
- * @param {{client_id: string, client_secret: string, redirect_uris: string[]}} clientConfig
+ * @param {{client_id: string, redirect_uris: string[]}} clientConfig
  * @returns {Promise<{access_token: string, instance_url: string}>}
  */
 exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
@@ -16,7 +16,6 @@ exports.getTokenAuthCode = async (code, endpoint, clientConfig) => {
     grant_type: "authorization_code",
     code: code,
     client_id: clientConfig.client_id,
-    client_secret: clientConfig.client_secret,
     redirect_uri: clientConfig.redirect_uris[0]
   });
 
@@ -208,7 +207,7 @@ exports.runSoqlQuery = async (accessToken, instanceUrl, query) => {
  * Tests end-to-end Salesforce connectivity by exchanging an auth code for a token and
  * running a minimal SOQL query. Returns a summary result without persisting the token.
  * @param {string} tokenEndpoint - OAuth token endpoint URL
- * @param {{client_id: string, client_secret: string, redirect_uris: string[]}} clientConfig
+ * @param {{client_id: string, redirect_uris: string[]}} clientConfig
  * @param {string} instanceUrl - Salesforce instance base URL
  * @param {string} code - OAuth authorization code
  * @returns {Promise<{tokenAcquired: boolean, recordCount: number, instanceUrl: string}>}

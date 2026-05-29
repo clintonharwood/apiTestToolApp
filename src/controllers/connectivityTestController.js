@@ -22,9 +22,9 @@ exports.showPage = (req, res) => {
  * @param {import('express').Response} res
  */
 exports.runTest = (req, res) => {
-  const { clientId, clientSecret, instanceUrl } = req.body;
+  const { clientId, instanceUrl } = req.body;
 
-  if (!clientId || !clientSecret || !instanceUrl) {
+  if (!clientId || !instanceUrl) {
     return res.json({ error: 'All fields are required.' });
   }
 
@@ -38,7 +38,6 @@ exports.runTest = (req, res) => {
   req.session.byocaTokenEndpoint = `${normalizedUrl}/services/oauth2/token`;
   req.session.byocaInstanceUrl = normalizedUrl;
   req.session.byocaClientId = clientId;
-  req.session.byocaClientSecret = clientSecret;
 
   const redirectUrl = buildUrl(`${normalizedUrl}/services/oauth2/authorize`, {
     response_type: 'code',
@@ -61,7 +60,7 @@ exports.runTest = (req, res) => {
  * @param {string} authorizationEndpoint - Full URL of the OAuth authorization endpoint
  * @param {string} tokenEndpoint - Full URL of the OAuth token endpoint
  * @param {string} normalizedUrl - Salesforce instance base URL (trailing slash removed)
- * @param {{client_id: string, client_secret: string}} client - OAuth client credentials
+ * @param {{client_id: string}} client - OAuth client credentials
  */
 exports.startAuthByoca = (req, res, authorizationEndpoint, tokenEndpoint, normalizedUrl, client) => {
   const state = crypto.randomBytes(32).toString('hex');
@@ -69,7 +68,6 @@ exports.startAuthByoca = (req, res, authorizationEndpoint, tokenEndpoint, normal
   req.session.byocaTokenEndpoint = tokenEndpoint;
   req.session.byocaInstanceUrl = normalizedUrl;
   req.session.byocaClientId = client.client_id;
-  req.session.byocaClientSecret = client.client_secret;
 
   const url = buildUrl(authorizationEndpoint, {
     response_type: 'code',
@@ -99,14 +97,12 @@ exports.callbackByoca = async (req, res) => {
   const normalizedUrl = req.session.byocaInstanceUrl;
   const ephemeralConfig = {
     client_id: req.session.byocaClientId,
-    client_secret: req.session.byocaClientSecret,
     redirect_uris: [REDIRECT_URI],
   };
 
   delete req.session.byocaTokenEndpoint;
   delete req.session.byocaInstanceUrl;
   delete req.session.byocaClientId;
-  delete req.session.byocaClientSecret;
 
   req.session.regenerate(async (err) => {
     if (err) return res.render('error', { error: 'Session error' });

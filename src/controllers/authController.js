@@ -158,8 +158,6 @@ exports.startClientCredentialsFlow = async (req, res) => {
       res.render("clientindex", { access_token: tokenData.access_token });
     });
   } catch (err) {
-    // TODO Remove
-    console.log(err);
     handleAxiosError(err, res, "Client Credentials");
   }
 };
