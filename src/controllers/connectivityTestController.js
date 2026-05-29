@@ -3,7 +3,7 @@ const salesforceService = require('../services/salesforceService');
 const { buildUrl, handleAxiosError } = require('../utils/helpers');
 
 const INSTANCE_URL_PATTERN = /^https:\/\/[a-zA-Z0-9-]+\.(my\.salesforce|salesforce|force)\.com(\/|$)/;
-const REDIRECT_URI = 'https://clintox.xyz/auth/callbackbyoca';
+const REDIRECT_URI = 'https://clintox.xyz/callbackbyoca';
 
 exports.showPage = (req, res) => {
   res.render('connectivityTest', { result: null, error: null });
