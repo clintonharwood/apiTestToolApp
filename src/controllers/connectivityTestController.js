@@ -9,22 +9,36 @@ exports.showPage = (req, res) => {
   res.render('connectivityTest', { result: null, error: null });
 };
 
-exports.runTest = async (req, res) => {
+exports.runTest = (req, res) => {
   const { clientId, clientSecret, instanceUrl } = req.body;
 
   if (!clientId || !clientSecret || !instanceUrl) {
-    return res.render('connectivityTest', { result: null, error: 'All fields are required.' });
+    return res.json({ error: 'All fields are required.' });
   }
 
   if (!INSTANCE_URL_PATTERN.test(instanceUrl)) {
-    return res.render('connectivityTest', { result: null, error: 'Instance URL must be a valid Salesforce domain (e.g. https://myorg.my.salesforce.com).' });
+    return res.json({ error: 'Instance URL must be a valid Salesforce domain (e.g. https://myorg.my.salesforce.com).' });
   }
 
   const normalizedUrl = instanceUrl.replace(/\/$/, '');
-  const tokenEndpoint = `${normalizedUrl}/services/oauth2/token`;
-  const authorizationEndpoint = `${normalizedUrl}/services/oauth2/authorize`;
+  const state = crypto.randomBytes(32).toString('hex');
+  req.session.oauthState = state;
+  req.session.byocaTokenEndpoint = `${normalizedUrl}/services/oauth2/token`;
+  req.session.byocaInstanceUrl = normalizedUrl;
+  req.session.byocaClientId = clientId;
+  req.session.byocaClientSecret = clientSecret;
 
-  exports.startAuthByoca(req, res, authorizationEndpoint, tokenEndpoint, normalizedUrl, { client_id: clientId, client_secret: clientSecret });
+  const redirectUrl = buildUrl(`${normalizedUrl}/services/oauth2/authorize`, {
+    response_type: 'code',
+    client_id: clientId,
+    redirect_uri: REDIRECT_URI,
+    state,
+  });
+
+  req.session.save((err) => {
+    if (err) return res.json({ error: 'Session error. Please try again.' });
+    res.json({ redirectUrl });
+  });
 };
 
 exports.startAuthByoca = (req, res, authorizationEndpoint, tokenEndpoint, normalizedUrl, client) => {

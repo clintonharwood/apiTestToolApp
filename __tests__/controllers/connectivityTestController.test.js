@@ -8,11 +8,15 @@ const connectivityTestController = require('../../src/controllers/connectivityTe
 const sfService = require('../../src/services/salesforceService');
 const { handleAxiosError } = require('../../src/utils/helpers');
 
-const mockReq = (body = {}, session = {}) => ({ body, session });
+const mockReq = (body = {}, session = {}) => ({
+  body,
+  session: { ...session, save: jest.fn((cb) => cb(null)) },
+});
 const mockRes = () => {
   const res = {};
   res.render = jest.fn();
   res.redirect = jest.fn();
+  res.json = jest.fn();
   return res;
 };
 
@@ -29,65 +33,52 @@ describe('showPage', () => {
 });
 
 describe('runTest', () => {
-  test('renders error when all fields are missing', async () => {
+  test('returns json error when all fields are missing', () => {
     const res = mockRes();
-    await connectivityTestController.runTest(mockReq({}), res);
-    expect(res.render).toHaveBeenCalledWith('connectivityTest', {
-      result: null,
-      error: 'All fields are required.'
-    });
+    connectivityTestController.runTest(mockReq({}), res);
+    expect(res.json).toHaveBeenCalledWith({ error: 'All fields are required.' });
   });
 
-  test('renders error when clientId is missing', async () => {
+  test('returns json error when clientId is missing', () => {
     const res = mockRes();
-    await connectivityTestController.runTest(
+    connectivityTestController.runTest(
       mockReq({ clientSecret: 'sec', instanceUrl: 'https://myorg.my.salesforce.com' }),
       res
     );
-    expect(res.render).toHaveBeenCalledWith('connectivityTest', {
-      result: null,
-      error: 'All fields are required.'
-    });
+    expect(res.json).toHaveBeenCalledWith({ error: 'All fields are required.' });
   });
 
-  test('renders error for invalid instance URL', async () => {
+  test('returns json error for invalid instance URL', () => {
     const res = mockRes();
-    await connectivityTestController.runTest(
+    connectivityTestController.runTest(
       mockReq({ clientId: 'id', clientSecret: 'sec', instanceUrl: 'https://notasalesforce.example.com' }),
       res
     );
-    expect(res.render).toHaveBeenCalledWith('connectivityTest', {
-      result: null,
-      error: expect.stringContaining('valid Salesforce domain')
-    });
+    expect(res.json).toHaveBeenCalledWith({ error: expect.stringContaining('valid Salesforce domain') });
   });
 
-  test('redirects to Salesforce authorization endpoint on valid input', async () => {
+  test('returns json redirectUrl to Salesforce authorization endpoint on valid input', () => {
     const res = mockRes();
-    const session = {};
-    await connectivityTestController.runTest(
-      mockReq({ clientId: 'cid', clientSecret: 'csec', instanceUrl: 'https://myorg.my.salesforce.com/' }, session),
+    connectivityTestController.runTest(
+      mockReq({ clientId: 'cid', clientSecret: 'csec', instanceUrl: 'https://myorg.my.salesforce.com/' }),
       res
     );
-    expect(res.redirect).toHaveBeenCalled();
-    const redirectUrl = res.redirect.mock.calls[0][0];
+    expect(res.json).toHaveBeenCalled();
+    const { redirectUrl } = res.json.mock.calls[0][0];
     expect(redirectUrl).toContain('https://myorg.my.salesforce.com/services/oauth2/authorize');
     expect(redirectUrl).toContain('response_type=code');
     expect(redirectUrl).toContain('client_id=cid');
   });
 
-  test('stores OAuth context in session on valid input', async () => {
+  test('stores OAuth context in session on valid input', () => {
     const res = mockRes();
-    const session = {};
-    await connectivityTestController.runTest(
-      mockReq({ clientId: 'cid', clientSecret: 'csec', instanceUrl: 'https://myorg.my.salesforce.com/' }, session),
-      res
-    );
-    expect(session.byocaTokenEndpoint).toBe('https://myorg.my.salesforce.com/services/oauth2/token');
-    expect(session.byocaInstanceUrl).toBe('https://myorg.my.salesforce.com');
-    expect(session.byocaClientId).toBe('cid');
-    expect(session.byocaClientSecret).toBe('csec');
-    expect(session.oauthState).toBeDefined();
+    const req = mockReq({ clientId: 'cid', clientSecret: 'csec', instanceUrl: 'https://myorg.my.salesforce.com/' });
+    connectivityTestController.runTest(req, res);
+    expect(req.session.byocaTokenEndpoint).toBe('https://myorg.my.salesforce.com/services/oauth2/token');
+    expect(req.session.byocaInstanceUrl).toBe('https://myorg.my.salesforce.com');
+    expect(req.session.byocaClientId).toBe('cid');
+    expect(req.session.byocaClientSecret).toBe('csec');
+    expect(req.session.oauthState).toBeDefined();
   });
 });
 
