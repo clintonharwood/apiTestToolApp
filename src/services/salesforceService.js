@@ -149,8 +149,8 @@ exports.runSoqlQuery = async (accessToken, instanceUrl, query) => {
   return response.data;
 }
 
-exports.testConnectivity = async (tokenEndpoint, clientConfig, instanceUrl) => {
-  const tokenData = await exports.getTokenClientCreds(tokenEndpoint, clientConfig);
+exports.testConnectivity = async (tokenEndpoint, clientConfig, instanceUrl, code) => {
+  const tokenData = await exports.getTokenAuthCode(code, tokenEndpoint, clientConfig);
   const queryData = await exports.runSoqlQuery(
     tokenData.access_token,
     instanceUrl,

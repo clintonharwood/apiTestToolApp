@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
+const connectivityTestController = require("../controllers/connectivityTestController");
 
 const requireClientCredsEnabled = (req, res, next) => {
   if (process.env.DISABLE_CLIENT_CREDENTIALS === 'true') {
@@ -20,6 +21,7 @@ router.get("/revokeoauthtoken", (req, res) => authController.startAuth(req, res,
 
 router.get("/callback", authController.callback);
 router.get("/callbacknoncommunity", authController.callback);
+router.get("/callbackbyoca", connectivityTestController.callbackByoca);
 // TODO impl
 router.get("/callbackcodeexchange", authController.callback);
 router.get("/callbackreuse", authController.callback);

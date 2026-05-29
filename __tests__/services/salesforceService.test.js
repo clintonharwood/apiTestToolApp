@@ -169,15 +169,16 @@ describe('webToCase', () => {
 });
 
 describe('testConnectivity', () => {
-  const clientConfig = { client_id: 'cid', client_secret: 'csec' };
+  const clientConfig = { client_id: 'cid', client_secret: 'csec', redirect_uris: ['https://clintox.xyz/auth/callbackbyoca'] };
   const instanceUrl = 'https://myorg.my.salesforce.com';
   const tokenEndpoint = `${instanceUrl}/services/oauth2/token`;
+  const code = 'authcode';
 
   test('returns tokenAcquired, recordCount, and instanceUrl on success', async () => {
     axios.post.mockResolvedValue({ data: { access_token: 'tok' } });
     axios.get.mockResolvedValue({ data: { totalSize: 4, records: [] } });
 
-    const result = await sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl);
+    const result = await sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl, code);
 
     expect(result).toEqual({ tokenAcquired: true, recordCount: 4, instanceUrl });
   });
@@ -186,7 +187,7 @@ describe('testConnectivity', () => {
     axios.post.mockResolvedValue({ data: { access_token: 'mytoken' } });
     axios.get.mockResolvedValue({ data: { totalSize: 1, records: [] } });
 
-    await sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl);
+    await sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl, code);
 
     const headers = axios.get.mock.calls[0][1].headers;
     expect(headers.Authorization).toBe('Bearer mytoken');
@@ -195,7 +196,7 @@ describe('testConnectivity', () => {
   test('propagates error when token request fails', async () => {
     axios.post.mockRejectedValue(new Error('auth failed'));
 
-    await expect(sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl))
+    await expect(sfService.testConnectivity(tokenEndpoint, clientConfig, instanceUrl, code))
       .rejects.toThrow('auth failed');
   });
 });
