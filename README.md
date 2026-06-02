@@ -16,6 +16,7 @@ https://clintox.xyz
 - **Web-to-Case form** — test Salesforce case submission
 - **Connectivity tester** — validate end-to-end connectivity with a custom org using your own credentials
 - **Mock API endpoints** — simulate slow responses, errors, timeouts, and record creation
+- **Salesforce Social Media Feed** — infinite-scroll feed of curated Salesforce documentation posts across Apex/SOQL, LWC, Flow, and Platform Architecture
 
 ## Tech Stack
 
@@ -24,6 +25,7 @@ https://clintox.xyz
 - **Templating**: EJS
 - **HTTP client**: Axios
 - **Security**: Helmet (CSP), express-session, express-rate-limit, CORS
+- **Database**: MongoDB (Mongoose)
 - **Testing**: Jest
 
 ## Prerequisites
@@ -31,6 +33,7 @@ https://clintox.xyz
 - Node.js v24+
 - npm
 - One or more Salesforce connected apps (OAuth clients) configured in your org(s)
+- MongoDB instance (local or Atlas) for the social feed feature
 
 ## Getting Started
 
@@ -39,6 +42,7 @@ git clone <repo-url>
 cd apiTestToolApp
 npm install
 cp .env.example .env   # then fill in your credentials
+npm run seed           # load the 100 Salesforce documentation posts into MongoDB
 npm start              # http://localhost:3003
 ```
 
@@ -72,6 +76,7 @@ Copy `.env.example` to `.env` and populate the values.
 | `SF_CLIENT_ID_LO` | OAuth client ID for Lightning Out |
 | `SF_CLIENT_SECRET_LO` | OAuth client secret for Lightning Out |
 | `REDIRECT_URI` | OAuth redirect URI for Lightning Out callback |
+| `MONGODB_URI` | MongoDB connection string (required for the social feed at `/feed`) |
 
 ### Optional
 
@@ -104,7 +109,10 @@ apiTestToolApp/
 │   │   ├── headlessApiController.js
 │   │   ├── webToCaseController.js
 │   │   ├── chaosController.js
-│   │   └── connectivityTestController.js
+│   │   ├── connectivityTestController.js
+│   │   └── feedController.js
+│   ├── models/
+│   │   └── Post.js           # Mongoose schema for feed posts
 │   ├── routes/               # Express route definitions
 │   ├── services/
 │   │   ├── salesforceService.js  # Axios wrapper for Salesforce API calls
@@ -112,7 +120,12 @@ apiTestToolApp/
 │   └── utils/
 │       └── helpers.js        # Shared error handling (handleAxiosError)
 ├── views/                    # EJS templates
+│   └── partials/
+│       └── card.ejs          # Reusable feed post card
 ├── public/                   # Static assets
+│   └── js/
+│       └── feed.js           # Infinite scroll (Intersection Observer)
+├── seed.js                   # Seed 100 Salesforce documentation posts into MongoDB
 └── __tests__/                # Jest test files
 ```
 
@@ -123,6 +136,7 @@ The `Procfile` is pre-configured (`web: npm start`). Set environment variables a
 ```bash
 heroku config:set SESSION_SECRET=<value>
 heroku config:set CLIENT_ID=<value>
+heroku config:set MONGODB_URI=<value>
 # ... set all required variables
 
 git push heroku main
