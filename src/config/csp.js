@@ -27,12 +27,14 @@ module.exports = (nonce) => helmet({
           "https://www.googletagmanager.com",
           "https://www.google.com",
           "https://www.gstatic.com",
-          "https://clintoxsupport.my.salesforce.com"
+          "https://clintoxsupport.my.salesforce.com",
+          "https://cdnjs.cloudflare.com"
         ],
         styleSrc: [
           "'self'",
           `'nonce-${nonce}'`,
-          "https://fonts.googleapis.com"
+          "https://fonts.googleapis.com",
+          "https://cdnjs.cloudflare.com"
         ],
         fontSrc: [
           "'self'",
@@ -40,7 +42,8 @@ module.exports = (nonce) => helmet({
         ],
         imgSrc: [
           "'self'",
-"https://www.googletagmanager.com"
+          "https://www.googletagmanager.com",
+          "data:"
         ],
         connectSrc: [
           "'self'",
@@ -48,6 +51,7 @@ module.exports = (nonce) => helmet({
           "https://www.google.com",
           "https://clintoxsupport.my.salesforce.com"
         ],
+        objectSrc: ["'none'"],
       },
     },
   });

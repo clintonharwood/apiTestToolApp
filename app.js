@@ -6,6 +6,11 @@ const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const session = require("express-session");
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => { console.error("MongoDB connection error:", err); process.exit(1); });
 
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error("SESSION_SECRET environment variable is required");

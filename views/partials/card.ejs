@@ -1,0 +1,11 @@
+<% posts.forEach(post => { %>
+<article class="post-card">
+  <span class="post-category"><%= post.category %></span>
+  <h2 class="post-title"><%= post.title %></h2>
+  <p class="post-summary"><%= post.summary %></p>
+  <% if (post.codeSnippet) { %>
+  <pre><code class="language-<%= post.language %>"><%= post.codeSnippet %></code></pre>
+  <% } %>
+  <a class="post-source" href="<%= post.originalUrl %>" target="_blank" rel="noopener noreferrer">Source</a>
+</article>
+<% }) %>
