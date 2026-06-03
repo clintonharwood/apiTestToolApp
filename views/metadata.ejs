@@ -1,0 +1,64 @@
+<%- include('partials/_head', { title: 'Metadata Explorer — Clintox' }) %>
+
+<div class="page-header">
+  <h1 class="mb-1">Metadata Explorer</h1>
+  <p class="page-desc">Browse your org's objects and fields via the Tooling API.</p>
+</div>
+
+<div id="meta-layout">
+
+  <!-- Left panel: object list -->
+  <div class="meta-left-panel">
+    <div class="mb-2">
+      <input
+        id="object-search"
+        type="search"
+        class="form-control"
+        placeholder="Search objects..."
+        autocomplete="off"
+        aria-label="Search objects"
+      >
+    </div>
+    <div id="object-list">
+      <div id="object-loading">
+        <span class="spinner-border" role="status" aria-hidden="true"></span> Loading objects&hellip;
+      </div>
+    </div>
+    <p id="object-count"></p>
+  </div>
+
+  <!-- Right panel: field table -->
+  <div class="meta-right-panel">
+    <div id="fields-placeholder">
+      Select an object to view its fields.
+    </div>
+    <div id="fields-panel" class="d-none">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h2 id="fields-title"></h2>
+        <span id="fields-count"></span>
+      </div>
+      <div class="card meta-card-overflow">
+        <div class="card-body p-0">
+          <table class="endpoint-table meta-fields-table">
+            <thead>
+              <tr>
+                <th>API Name</th>
+                <th>Label</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody id="fields-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="fields-error" class="alert alert-danger d-none"></div>
+  </div>
+
+</div>
+
+<%- include('partials/_foot', {
+  extraFoot: `<script nonce="${cspNonce}" src="/js/metadataTree.js"></script>`
+}) %>

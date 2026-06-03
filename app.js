@@ -55,7 +55,7 @@ app.use(session({
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true, httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
+  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
 
 // Static assets

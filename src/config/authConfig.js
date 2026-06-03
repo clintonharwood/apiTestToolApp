@@ -1,29 +1,31 @@
+const BASE_URL = process.env.BASE_URL || 'https://clintox.xyz';
+
 module.exports = {
     clients: {
         one: {
             client_id: process.env.CLIENT_ID,
             client_secret: process.env.CLIENT_SECRET,
-            redirect_uris: ["https://clintox.xyz/callback"],
+            redirect_uris: [`${BASE_URL}/callback`],
         },
         two: {
             client_id: process.env.CLIENT_ID_TWO,
             client_secret: process.env.CLIENT_SECRET_TWO,
-            redirect_uris: ["https://clintox.xyz/callbacknoncommunity"],
+            redirect_uris: [`${BASE_URL}/callbacknoncommunity`],
         },
         three: {
             client_id: process.env.CLIENT_ID_THREE,
             client_secret: process.env.CLIENT_SECRET_THREE,
-            redirect_uris: ["https://clintox.xyz/callbackclientcredsflow"],
+            redirect_uris: [`${BASE_URL}/callbackclientcredsflow`],
         },
         four: {
             client_id: process.env.CLIENT_ID_FOUR,
             client_secret: process.env.CLIENT_SECRET_FOUR,
-            redirect_uris: ["https://clintox.xyz/callbackreuse"],
+            redirect_uris: [`${BASE_URL}/callbackreuse`],
         },
         five: {
             client_id: process.env.CLIENT_ID_FIVE,
             client_secret: process.env.CLIENT_SECRET_FIVE,
-            redirect_uris: ["https://clintox.xyz/callbackcodeexchange"],
+            redirect_uris: [`${BASE_URL}/callbackcodeexchange`],
             username: process.env.UN,
             password: process.env.PW
         }
