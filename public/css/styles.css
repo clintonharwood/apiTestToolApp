@@ -535,25 +535,6 @@ body.pulse-page {
   background: #f4f6f9;
 }
 
-.pulse-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #ffffff;
-  border-bottom: 1px solid #d8dde6;
-  padding: 0 1.5rem;
-  height: 52px;
-  display: flex;
-  align-items: center;
-}
-
-.pulse-brand {
-  font-weight: 800;
-  font-size: 1.25rem;
-  color: #0070d2;
-  letter-spacing: -0.03em;
-}
-
 #feed-container {
   max-width: 600px;
   width: 100%;

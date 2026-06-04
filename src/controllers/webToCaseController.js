@@ -16,7 +16,6 @@ exports.start = async (req, res) => {
   if (phone)     requestBody.Phone             = phone.trim();
   if (subject)   requestBody.Subject           = subject.trim();
   if (description)  requestBody.Description    = description.trim();
-  requestBody.orgid = '00D5j00000CvOSL';
 
   try {
     const results = await salesforceService.webToCase(requestBody);

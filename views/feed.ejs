@@ -1,19 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SFDC Pulse</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
+<%- include('partials/_head', {
+  title: 'SFDC Pulse — Clintox',
+  extraHead: '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"><link rel="stylesheet" href="/css/styles.css">'
+}) %>
 <body class="pulse-page">
-
-  <header class="pulse-header">
-    <span class="pulse-brand">SFDC Pulse</span>
-  </header>
-
   <main id="feed-container" data-cursor="<%= nextCursor %>">
     <%- include('partials/card', { posts }) %>
   </main>

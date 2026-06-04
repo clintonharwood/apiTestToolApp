@@ -151,9 +151,10 @@ describe('webToCase', () => {
     const headers = axios.post.mock.calls[0][2].headers;
     expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
 
+    const url = axios.post.mock.calls[0][0];
+    expect(url).toContain('orgId=00D5j00000CvOSL');
     const body = axios.post.mock.calls[0][1];
     expect(typeof body).toBe('string');
-    expect(body).toContain('orgid=');
   });
 
   test('returns response data', async () => {
