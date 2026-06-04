@@ -156,18 +156,10 @@ exports.headlessPasswordSet = async (username, otp, password, recaptcha) => {
  * Submits a hardcoded support case to the Salesforce Web-to-Case endpoint.
  * @returns {Promise<string>} Raw HTML response from Salesforce
  */
-exports.webToCase = async () => {
-  const requestBody = {
-    orgid: '00D5j00000CvOSL',
-		name: 'Donald',
-		email: 'clinto_is@hotmail.com',
-		phone: '0432202726',
-		subject: 'Help Me with clintox website',
-		description: 'Getting an ISE'
-  }
+exports.webToCase = async (requestBody) => {
 
   const response = await axios.post(
-    `https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL&debug=1&debugEmail=clinto_is%40hotmail.com`,
+    `https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8&orgId=00D5j00000CvOSL`,
     qs.stringify(requestBody),
     {
         headers: {

@@ -87,8 +87,7 @@ exports.callback = async (req, res) => {
 
       try {
         if (action === 'createAccount') {
-          const acc = await sfService.createAccount(tokenData.access_token, { Name: "Clintox API Test Tool" });
-          return res.render("createaccountui", { result: JSON.stringify(acc) });
+          return res.redirect('/createaccount');
         } else if (action === 'report') {
           return res.redirect('/serveReport');
         } else if (action === 'platformEvent') {
