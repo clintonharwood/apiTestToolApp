@@ -5,6 +5,7 @@ const { salesforceDocs } = require("../utils/helpers");
 const webToCaseController = require("../controllers/webToCaseController");
 const soqlController = require("../controllers/soqlController");
 const createAccountController = require("../controllers/createAccountController");
+const chaosController = require('../controllers/chaosController');
 
 /**
  * Middleware that blocks the Web-to-Case route when the DISABLE_WEB_TO_CASE
@@ -52,6 +53,8 @@ router.get("/createaccount", hasToken, (req, res) => res.render("createAccountFo
 router.post("/createaccount", hasToken, createAccountController.submit);
 router.get("/soql", hasToken, (req, res) => res.render("soqlRunner", { query: '', results: null, totalSize: null, error: null, showRaw: false, rawJson: null }));
 router.post("/soql", hasToken, soqlLimiter, (req, res) => soqlController.start(req, res));
+router.get('/chaos', hasToken, chaosController.showChaos);
+router.post('/chaos/run', hasToken, chaosController.runChaos);
 
 router.get("/random", (req, res) => {
   const randomIndex = Math.floor(Math.random() * salesforceDocs.length);

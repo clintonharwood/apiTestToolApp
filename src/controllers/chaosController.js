@@ -6,7 +6,7 @@ const chaosService = require('../services/chaosService');
  * @param {import('express').Response} res
  */
 exports.showChaos = (req, res) => {
-  res.render('chaos', { results: null, hasToken: !!req.session.accessToken });
+  res.render('chaos', { results: null });
 };
 
 /**

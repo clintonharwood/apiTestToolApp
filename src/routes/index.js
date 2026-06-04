@@ -6,7 +6,6 @@ router.use("/", require("./pages"));
 router.use("/", require("./auth"));
 router.use("/", require("./api"));
 router.use("/", require("./headless"));
-router.use("/", require("./chaos"));
 router.use("/", require("./connectivityTest"));
 router.use("/", require("./metadata"));
 
