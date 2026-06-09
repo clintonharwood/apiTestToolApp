@@ -4,3 +4,4 @@ CLAUDE.md
 .DS_Store
 saml-idp.key
 saml-idp.crt
+scripts
