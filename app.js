@@ -57,7 +57,7 @@ app.use(session({
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongooseConnection: mongoose.connection }),
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
 
