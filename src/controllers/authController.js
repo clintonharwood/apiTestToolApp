@@ -79,9 +79,11 @@ exports.callback = async (req, res) => {
 
     const tokenData = await sfService.getTokenAuthCode(code, endpoint, client);
 
+    const passportSession = req.session.passport;
     // Regenerate session after login to prevent session fixation
     req.session.regenerate(async (err) => {
       if (err) return res.render("error", { error: "Session error" });
+      if (passportSession) req.session.passport = passportSession;
       req.session.accessToken = tokenData.access_token;
       req.session.instanceUrl = tokenData.instance_url;
 
@@ -149,9 +151,11 @@ exports.startClientCredentialsFlow = async (req, res) => {
 
     const tokenData = await sfService.getTokenClientCreds(endpoint, client);
 
+    const passportSession = req.session.passport;
     // Regenerate session after login to prevent session fixation
     req.session.regenerate((err) => {
       if (err) return res.render("error", { error: "Session error" });
+      if (passportSession) req.session.passport = passportSession;
       req.session.accessToken = tokenData.access_token;
       req.session.instanceUrl = tokenData.instance_url;
       res.render("clientindex", { access_token: tokenData.access_token });

@@ -7,6 +7,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const passport = require("passport");
+const { MongoStore } = require("connect-mongo");
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
@@ -50,13 +52,18 @@ app.use((req, res, next) => buildCspConfig(res.locals.cspNonce)(req, res, next))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session
+// Session — backed by MongoDB so it survives restarts/deploys
 app.use(session({
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({ mongooseConnection: mongoose.connection }),
   cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
 }));
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Static assets
 app.use(express.static(path.join(__dirname, "public")));

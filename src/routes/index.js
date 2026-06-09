@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+router.use("/", require("./login"));
+router.use("/", require("./admin"));
 router.use("/", require("./feed"));
 router.use("/", require("./pages"));
 router.use("/", require("./auth"));
