@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><title>Redirecting...</title></head>
-<body onload="document.forms[0].submit()">
+<body>
   <form method="POST" action="<%= acsUrl %>">
     <input type="hidden" name="SAMLResponse" value="<%= samlResponse %>">
     <% if (relayState) { %>
@@ -9,5 +9,8 @@
     <% } %>
     <noscript><button type="submit">Continue to application</button></noscript>
   </form>
+  <script nonce="<%= cspNonce %>">
+    window.addEventListener('load', function() { document.forms[0].submit(); });
+  </script>
 </body>
 </html>
