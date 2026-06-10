@@ -3,9 +3,15 @@ const fs = require("fs");
 const path = require("path");
 
 function loadPem(envVar, filePath) {
-  if (process.env[envVar]) return Buffer.from(process.env[envVar], "base64").toString("utf8");
-  const full = path.resolve(__dirname, "../../", filePath);
-  return fs.existsSync(full) ? fs.readFileSync(full, "utf8") : null;
+  let pem;
+  if (process.env[envVar]) {
+    pem = Buffer.from(process.env[envVar], "base64").toString("utf8");
+  } else {
+    const full = path.resolve(__dirname, "../../", filePath);
+    pem = fs.existsSync(full) ? fs.readFileSync(full, "utf8") : null;
+  }
+  // Strip control chars invalid in XML 1.0 (e.g. STX \x02) that survive samlify's normalizeCerString
+  return pem ? pem.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") : null;
 }
 
 const privateKey = loadPem("IDP_PRIVATE_KEY", "certs/idp-key.pem");
