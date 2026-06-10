@@ -2,15 +2,23 @@ const samlify = require("samlify");
 const fs = require("fs");
 const path = require("path");
 
-function loadPem(envVar, filePath) {
+function loadPem(envVar, filePath, wrapAsPrivateKey = false) {
   let pem;
   if (process.env[envVar]) {
     const raw = process.env[envVar];
     const decoded = Buffer.from(raw, "base64").toString("utf8");
-    // If decoded content has PEM headers, the env var is a base64-encoded full PEM file.
-    // Otherwise, the env var is already a bare cert body (base64 of DER) — use it directly
-    // to avoid double-decoding base64 → DER binary which produces garbage in the XML.
-    pem = decoded.trimStart().startsWith("-----BEGIN") ? decoded : raw;
+    if (decoded.trimStart().startsWith("-----BEGIN")) {
+      // Env var is a base64-encoded full PEM file — use the decoded string.
+      pem = decoded;
+    } else if (wrapAsPrivateKey) {
+      // Bare base64 DER key body. samlify does not normalize private keys (unlike certs),
+      // so wrap in PKCS#8 PEM headers before passing to xml-crypto / Node crypto.Sign.
+      const body = raw.replace(/\s+/g, "").match(/.{1,64}/g).join("\n");
+      pem = `-----BEGIN PRIVATE KEY-----\n${body}\n-----END PRIVATE KEY-----\n`;
+    } else {
+      // Bare base64 cert body — samlify normalizes these internally, pass as-is.
+      pem = raw;
+    }
   } else {
     const full = path.resolve(__dirname, "../../", filePath);
     pem = fs.existsSync(full) ? fs.readFileSync(full, "utf8") : null;
@@ -18,7 +26,7 @@ function loadPem(envVar, filePath) {
   return pem ? pem.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") : null;
 }
 
-const privateKey = loadPem("IDP_PRIVATE_KEY", "certs/idp-key.pem");
+const privateKey = loadPem("IDP_PRIVATE_KEY", "certs/idp-key.pem", true);
 const cert = loadPem("IDP_CERT", "certs/idp-cert.pem");
 
 const idpConfigured = !!(
