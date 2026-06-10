@@ -106,13 +106,24 @@ router.get("/login", (req, res) => {
   res.render("login", { title: "Login — Clintox", errorMessage });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login?error=1",
-  })
-);
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user) => {
+    if (err) return next(err);
+    if (!user) return res.redirect("/login?error=1");
+    req.session.regenerate((regenErr) => {
+      if (regenErr) return next(regenErr);
+      req.logIn(user, { session: false }, (loginErr) => {
+        if (loginErr) return next(loginErr);
+        req.session.passport = { user: user._id.toString() };
+        const redirectTo = req.session.pendingSamlRequest ? "/idp/sso" : "/";
+        req.session.save((saveErr) => {
+          if (saveErr) return next(saveErr);
+          res.redirect(redirectTo);
+        });
+      });
+    });
+  })(req, res, next);
+});
 
 router.get("/logout", (req, res, next) => {
   req.logout((err) => {

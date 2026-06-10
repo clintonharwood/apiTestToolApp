@@ -7,7 +7,8 @@
     "dev": "nodemon app.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "saml-idp": "saml-idp --acsUrl http://localhost:3003/auth/sso/callback --audience http://localhost:3003"
+    "saml-idp": "saml-idp --acsUrl http://localhost:3003/auth/sso/callback --audience http://localhost:3003",
+    "gen:idp-cert": "mkdir -p certs && openssl req -x509 -newkey rsa:2048 -keyout certs/idp-key.pem -out certs/idp-cert.pem -days 730 -nodes -subj \"/CN=saml-idp\""
   },
   "jest": {
     "testEnvironment": "node"
@@ -30,7 +31,8 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "qs": "^6.11.2",
-    "randomstring": "^1.3.0"
+    "randomstring": "^1.3.0",
+    "samlify": "^2.13.1"
   },
   "engines": {
     "node": "^24"

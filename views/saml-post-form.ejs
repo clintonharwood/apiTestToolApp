@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Redirecting...</title></head>
+<body onload="document.forms[0].submit()">
+  <form method="POST" action="<%= acsUrl %>">
+    <input type="hidden" name="SAMLResponse" value="<%= samlResponse %>">
+    <% if (relayState) { %>
+    <input type="hidden" name="RelayState" value="<%= relayState %>">
+    <% } %>
+    <noscript><button type="submit">Continue to application</button></noscript>
+  </form>
+</body>
+</html>

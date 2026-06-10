@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 router.use("/", require("./login"));
+router.use("/", require("./idp"));
 router.use("/", require("./admin"));
 router.use("/", require("./feed"));
 router.use("/", require("./pages"));
