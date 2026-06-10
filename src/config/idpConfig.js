@@ -5,12 +5,16 @@ const path = require("path");
 function loadPem(envVar, filePath) {
   let pem;
   if (process.env[envVar]) {
-    pem = Buffer.from(process.env[envVar], "base64").toString("utf8");
+    const raw = process.env[envVar];
+    const decoded = Buffer.from(raw, "base64").toString("utf8");
+    // If decoded content has PEM headers, the env var is a base64-encoded full PEM file.
+    // Otherwise, the env var is already a bare cert body (base64 of DER) — use it directly
+    // to avoid double-decoding base64 → DER binary which produces garbage in the XML.
+    pem = decoded.trimStart().startsWith("-----BEGIN") ? decoded : raw;
   } else {
     const full = path.resolve(__dirname, "../../", filePath);
     pem = fs.existsSync(full) ? fs.readFileSync(full, "utf8") : null;
   }
-  // Strip control chars invalid in XML 1.0 (e.g. STX \x02) that survive samlify's normalizeCerString
   return pem ? pem.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "") : null;
 }
 
