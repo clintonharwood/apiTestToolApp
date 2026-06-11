@@ -79,7 +79,7 @@ if (idpConfigured) {
         '</saml:Conditions>' +
         '<saml:AuthnStatement AuthnInstant="{IssueInstant}">' +
         '<saml:AuthnContext>' +
-        '<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef>' +
+        '<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:X509</saml:AuthnContextClassRef>' +
         '</saml:AuthnContext>' +
         '</saml:AuthnStatement>' +
         '{AttributeStatement}' +
