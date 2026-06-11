@@ -55,7 +55,7 @@ async function handleSsoRequest(binding, req, res, next) {
         displayName: req.user.displayName || req.user.username,
         username: req.user.username,
       },
-      { relayState, customTagReplacement: (tmpl) => ({ context: tmpl }) }
+      { relayState }
     );
 
     // Clean up stashed request

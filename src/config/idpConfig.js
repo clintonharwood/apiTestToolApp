@@ -89,6 +89,12 @@ if (idpConfigured) {
     },
   });
 
+  // Without this, samlify's substitution path ignores loginResponseTemplate and
+  // falls back to its default, dropping the AuthnStatement we baked in as literal XML.
+  idp.entitySetting.tagPrefixedDefaults = {
+    loginResponseTemplate: idp.entitySetting.loginResponseTemplate,
+  };
+
   const spConfig = {
     entityID: process.env.SP_ENTITY_ID,
     assertionConsumerService: [
