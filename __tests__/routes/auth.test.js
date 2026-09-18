@@ -5,6 +5,10 @@ jest.mock('../../src/controllers/authController', () => ({
   serveReportPage: jest.fn(),
   serveReportDownload: jest.fn(),
 }));
+jest.mock('../../src/controllers/lightningOutController', () => ({
+  renderLwc: jest.fn(),
+  callback: jest.fn(),
+}));
 
 const mockNext = jest.fn();
 
@@ -16,15 +20,13 @@ const mockRes = () => {
   return res;
 };
 
-// Extract requireClientCredsEnabled by pulling it out of the router's layer stack
+// Extract requireClientCredsEnabled by pulling it out of /authorizeclientcreds route
 function getGuard() {
   jest.resetModules();
   const router = require('../../src/routes/auth');
-  // The guard is applied to /authorizethree — find the layer for that path
   const layer = router.stack.find(
-    l => l.route && l.route.path === '/authorizethree'
+    l => l.route && l.route.path === '/authorizeclientcreds'
   );
-  // The first handler in the stack is the guard, the second is the controller wrapper
   return layer.route.stack[0].handle;
 }
 
@@ -60,20 +62,20 @@ describe('requireClientCredsEnabled middleware', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  test('/callbackclientcredsflow route does not exist (client credentials has no redirect callback)', () => {
+  test('/authorizeclientcreds route has guard + controller (2 handlers)', () => {
     jest.resetModules();
     const router = require('../../src/routes/auth');
     const layer = router.stack.find(
-      l => l.route && l.route.path === '/callbackclientcredsflow'
+      l => l.route && l.route.path === '/authorizeclientcreds'
     );
-    expect(layer).toBeUndefined();
+    expect(layer.route.stack.length).toBe(2);
   });
 
-  test('other routes do not have the guard (authorizeone has one handler)', () => {
+  test('other routes do not have the guard (/authorize has one handler)', () => {
     jest.resetModules();
     const router = require('../../src/routes/auth');
     const layer = router.stack.find(
-      l => l.route && l.route.path === '/authorizeone'
+      l => l.route && l.route.path === '/authorize'
     );
     expect(layer.route.stack.length).toBe(1);
   });

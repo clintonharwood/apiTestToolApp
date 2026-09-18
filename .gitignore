@@ -1,8 +1,24 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment / secrets  (NOTE: .env.example is intentionally NOT ignored — it is the committed template)
 .env
-CLAUDE.md
-.DS_Store
-saml-idp.key
-saml-idp.crt
-scripts
+.env.local
+.env.*.local
+
+# TLS keys & certs — SAML IdP signing material (loaded by src/config/idpConfig.js)
 certs/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Editor / OS cruft
+.DS_Store
+
+# Claude Code local config
+.claude
+CLAUDE.md

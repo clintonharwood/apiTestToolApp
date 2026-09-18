@@ -14,7 +14,11 @@ exports.submit = async (req, res) => {
   if (website)   accountData.Website           = website.trim();
 
   try {
-    const result = await sfService.createAccount(req.session.accessToken, accountData);
+    const result = await sfService.createAccount(
+      req.session.accessToken,
+      req.session.orgConfig.instanceUrl,
+      accountData
+    );
     return res.render('createaccountui', { result: JSON.stringify(result) });
   } catch (err) {
     handleAxiosError(err, res, 'Create Account');

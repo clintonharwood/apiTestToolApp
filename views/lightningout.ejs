@@ -1,10 +1,10 @@
 <%- include('partials/_head', {
   title: 'Lightning Out 2.0 — Clintox',
-  extraHead: '<script type="text/javascript" async src="https://clintoxsupport.my.salesforce.com/lightning/lightning.out.latest/index.iife.prod.js"></script>'
+  extraHead: '<script type="text/javascript" async src="' + instanceUrl + '/lightning/lightning.out.latest/index.iife.prod.js"></script>'
 }) %>
 
 <h1>Lightning Out 2.0</h1>
-<p class="page-desc">Embedded Salesforce LWC component rendered on this external (Heroku) page.</p>
+<p class="page-desc">Embedded Salesforce LWC component rendered on this external page.</p>
 
 <div class="lwc-container">
   <lightning-out-application
@@ -13,7 +13,7 @@
     frontdoor-url="<%= frontdoorUrl %>"
     components="c-lightning-out-two-wrapper">
   </lightning-out-application>
-  <c-lightning-out-two-wrapper header-title="Hello from <%= user.name %>!"></c-lightning-out-two-wrapper>
+  <c-lightning-out-two-wrapper></c-lightning-out-two-wrapper>
 </div>
 
 <script nonce="<%= cspNonce %>">

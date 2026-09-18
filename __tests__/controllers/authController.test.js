@@ -7,13 +7,17 @@ jest.mock('../../src/utils/helpers', () => ({
 const authController = require('../../src/controllers/authController');
 const sfService = require('../../src/services/salesforceService');
 const { buildUrl, handleAxiosError } = require('../../src/utils/helpers');
-const authConfig = require('../../src/config/authConfig');
+
+const ORG_CONFIG = {
+  instanceUrl: 'https://myorg.my.salesforce.com',
+  clientId: 'client123',
+  siteUrl: 'https://myorg.my.site.com/portal',
+};
 
 const mockReq = (overrides = {}) => {
   const base = {
-    session: {},
+    session: { orgConfig: ORG_CONFIG },
     query: {},
-    path: '/callback',
   };
   const merged = { ...base, ...overrides };
   if (!merged.session.regenerate) {
@@ -26,7 +30,9 @@ const mockRes = () => ({
   redirect: jest.fn(),
   render: jest.fn(),
   attachment: jest.fn(),
-  send: jest.fn()
+  send: jest.fn(),
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn(),
 });
 
 beforeEach(() => {
@@ -36,94 +42,61 @@ beforeEach(() => {
 // ── startAuth ──────────────────────────────────────────────────────────────
 
 describe('startAuth', () => {
+  test('redirects to /setup when orgConfig is missing', () => {
+    const req = mockReq({ session: { orgConfig: null, regenerate: jest.fn((cb) => cb(null)) } });
+    const res = mockRes();
+    authController.startAuth(req, res, 'standard');
+    expect(res.redirect).toHaveBeenCalledWith('/setup');
+  });
+
   test('stores generated state in session', () => {
     const req = mockReq();
-    authController.startAuth(req, mockRes(), 'one');
+    authController.startAuth(req, mockRes(), 'standard');
     expect(req.session.oauthState).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  test('type "one" — sets authServer to serverOne in session', () => {
+  test('stores authType in session', () => {
     const req = mockReq();
-    authController.startAuth(req, mockRes(), 'one');
-    expect(req.session.authServer).toBe('serverOne');
+    authController.startAuth(req, mockRes(), 'site');
+    expect(req.session.authType).toBe('site');
   });
 
-  test('type "one" — calls buildUrl with authServerOne endpoint', () => {
-    authController.startAuth(mockReq(), mockRes(), 'one');
+  test('calls buildUrl with instanceUrl authorize endpoint for standard type', () => {
+    authController.startAuth(mockReq(), mockRes(), 'standard');
     expect(buildUrl).toHaveBeenCalledWith(
-      authConfig.endpoints.authServerOne.authorizationEndpoint,
+      `${ORG_CONFIG.instanceUrl}/services/oauth2/authorize`,
       expect.any(Object)
     );
   });
 
-  test('type "one" — stores oauthClientKey "one" in session', () => {
-    const req = mockReq();
-    authController.startAuth(req, mockRes(), 'one');
-    expect(req.session.oauthClientKey).toBe('one');
-  });
-
-  test('type "two" — sets authServer to serverTwo in session', () => {
-    const req = mockReq();
-    authController.startAuth(req, mockRes(), 'two');
-    expect(req.session.authServer).toBe('serverTwo');
-  });
-
-  test('type "two" — calls buildUrl with authServerTwo endpoint', () => {
-    authController.startAuth(mockReq(), mockRes(), 'two');
+  test('calls buildUrl with siteUrl authorize endpoint for site type', () => {
+    authController.startAuth(mockReq(), mockRes(), 'site');
     expect(buildUrl).toHaveBeenCalledWith(
-      authConfig.endpoints.authServerTwo.authorizationEndpoint,
+      `${ORG_CONFIG.siteUrl}/services/oauth2/authorize`,
       expect.any(Object)
     );
   });
 
-  test('type "three" — calls buildUrl with authServerThree endpoint', () => {
-    authController.startAuth(mockReq(), mockRes(), 'three');
-    expect(buildUrl).toHaveBeenCalledWith(
-      authConfig.endpoints.authServerThree.authorizationEndpoint,
-      expect.any(Object)
-    );
-  });
-
-  test('type "three" — uses client three (oauthClientKey is "three")', () => {
-    const req = mockReq();
-    authController.startAuth(req, mockRes(), 'three');
-    expect(req.session.oauthClientKey).toBe('three');
-  });
-
-  test('type "three" — uses client_credentials response_type', () => {
-    authController.startAuth(mockReq(), mockRes(), 'three');
+  test('uses orgConfig.clientId in buildUrl params', () => {
+    authController.startAuth(mockReq(), mockRes(), 'standard');
     const params = buildUrl.mock.calls[0][1];
-    expect(params.response_type).toBe('client_credentials');
+    expect(params.client_id).toBe(ORG_CONFIG.clientId);
   });
 
-  test('type "reuse" — uses client three (oauthClientKey is "three")', () => {
-    const req = mockReq();
-    authController.startAuth(req, mockRes(), 'reuse');
-    expect(req.session.oauthClientKey).toBe('three');
-  });
-
-  test('type "reuse" — calls buildUrl with authServerTwo endpoint', () => {
-    authController.startAuth(mockReq(), mockRes(), 'reuse');
-    expect(buildUrl).toHaveBeenCalledWith(
-      authConfig.endpoints.authServerTwo.authorizationEndpoint,
-      expect.any(Object)
-    );
-  });
-
-  test('non-three type — uses "code" response_type', () => {
-    authController.startAuth(mockReq(), mockRes(), 'one');
+  test('uses code response_type', () => {
+    authController.startAuth(mockReq(), mockRes(), 'standard');
     const params = buildUrl.mock.calls[0][1];
     expect(params.response_type).toBe('code');
   });
 
   test('calls res.redirect with the built URL', () => {
     const res = mockRes();
-    authController.startAuth(mockReq(), res, 'one');
+    authController.startAuth(mockReq(), res, 'standard');
     expect(res.redirect).toHaveBeenCalledWith('https://auth.example.com/authorize?mocked=true');
   });
 
   test('includes state in buildUrl params', () => {
-    authController.startAuth(mockReq(), mockRes(), 'one');
+    authController.startAuth(mockReq(), mockRes(), 'standard');
     const params = buildUrl.mock.calls[0][1];
     expect(params.state).toMatch(/^[0-9a-f]{64}$/);
   });
@@ -141,7 +114,7 @@ describe('callback', () => {
 
   test('renders error view on state mismatch', async () => {
     const req = mockReq({
-      session: { oauthState: 'correct_state' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'correct_state', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'wrong_state' }
     });
     const res = mockRes();
@@ -149,54 +122,61 @@ describe('callback', () => {
     expect(res.render).toHaveBeenCalledWith('error', { error: 'State mismatch' });
   });
 
-  test('successful default flow — renders clientindex with access_token', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok123' });
+  test('redirects to /setup when orgConfig missing', async () => {
     const req = mockReq({
-      session: { oauthState: 'st', authServer: 'serverOne', oauthClientKey: 'one' },
+      session: { orgConfig: null, oauthState: 'st', regenerate: jest.fn((cb) => cb(null)) },
+      query: { code: 'code', state: 'st' }
+    });
+    const res = mockRes();
+    await authController.callback(req, res);
+    expect(res.redirect).toHaveBeenCalledWith('/setup');
+  });
+
+  test('successful default flow — renders clientindex with access_token and orgConfig', async () => {
+    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok123', instance_url: 'https://myorg.my.salesforce.com' });
+    const req = mockReq({
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
     const res = mockRes();
 
     await authController.callback(req, res);
 
-    expect(res.render).toHaveBeenCalledWith('clientindex', { access_token: 'tok123' });
+    expect(res.render).toHaveBeenCalledWith('clientindex', expect.objectContaining({ access_token: 'tok123' }));
   });
 
   test('stores instance_url from token response in session', async () => {
     sfService.getTokenAuthCode.mockResolvedValue({
       access_token: 'tok123',
-      instance_url: 'https://example.my.salesforce.com',
+      instance_url: 'https://myorg.my.salesforce.com',
     });
     const req = mockReq({
-      session: { oauthState: 'st', authServer: 'serverOne', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
 
     await authController.callback(req, mockRes());
 
-    expect(req.session.instanceUrl).toBe('https://example.my.salesforce.com');
+    expect(req.session.instanceUrl).toBe('https://myorg.my.salesforce.com');
   });
 
-  test('createAccount flow — renders createaccountui', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
-    sfService.createAccount.mockResolvedValue({ id: 'acc001', success: true });
+  test('createAccount flow — redirects to /createaccount', async () => {
+    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok', instance_url: 'https://myorg.my.salesforce.com' });
     const req = mockReq({
-      session: { oauthState: 'st', action: 'createAccount', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', action: 'createAccount', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
     const res = mockRes();
 
     await authController.callback(req, res);
 
-    expect(res.render).toHaveBeenCalledWith('createaccountui', expect.objectContaining({
-      result: expect.stringContaining('acc001')
-    }));
+    expect(res.redirect).toHaveBeenCalledWith('/createaccount');
   });
 
   test('downloadReport flow — redirects to /serveReport', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
+    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok', instance_url: 'https://myorg.my.salesforce.com' });
     const req = mockReq({
-      session: { oauthState: 'st', action: 'report', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', action: 'report', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
     const res = mockRes();
@@ -210,7 +190,7 @@ describe('callback', () => {
     const err = new Error('token failed');
     sfService.getTokenAuthCode.mockRejectedValue(err);
     const req = mockReq({
-      session: { oauthState: 'st', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
     const res = mockRes();
@@ -220,69 +200,85 @@ describe('callback', () => {
     expect(handleAxiosError).toHaveBeenCalledWith(err, res, 'Callback');
   });
 
-  test('uses oauthClientKey from session to select client', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
+  test('uses instanceUrl token endpoint for standard authType', async () => {
+    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok', instance_url: 'https://myorg.my.salesforce.com' });
     const req = mockReq({
-      session: { oauthState: 'st', oauthClientKey: 'two', authServer: 'serverTwo' },
-      query: { code: 'code', state: 'st' }
-    });
-    const res = mockRes();
-
-    await authController.callback(req, res);
-
-    expect(sfService.getTokenAuthCode).toHaveBeenCalledWith(
-      'code',
-      expect.any(String),
-      authConfig.clients.two
-    );
-  });
-
-  test('falls back to client "one" when oauthClientKey missing from session', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
-    const req = mockReq({
-      session: { oauthState: 'st' },
-      query: { code: 'code', state: 'st' }
-    });
-    const res = mockRes();
-
-    await authController.callback(req, res);
-
-    expect(sfService.getTokenAuthCode).toHaveBeenCalledWith(
-      'code',
-      expect.any(String),
-      authConfig.clients.one
-    );
-  });
-
-  test('uses serverOne token endpoint when authServer is serverOne', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
-    const req = mockReq({
-      session: { oauthState: 'st', authServer: 'serverOne', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', authType: 'standard', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
 
     await authController.callback(req, mockRes());
 
     expect(sfService.getTokenAuthCode).toHaveBeenCalledWith(
-      expect.any(String),
-      authConfig.endpoints.authServerOne.tokenEndpoint,
+      'code',
+      `${ORG_CONFIG.instanceUrl}/services/oauth2/token`,
       expect.any(Object)
     );
   });
 
-  test('uses serverTwo token endpoint when authServer is not serverOne', async () => {
-    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok' });
+  test('uses siteUrl token endpoint for site authType', async () => {
+    sfService.getTokenAuthCode.mockResolvedValue({ access_token: 'tok', instance_url: 'https://myorg.my.salesforce.com' });
     const req = mockReq({
-      session: { oauthState: 'st', authServer: 'serverTwo', oauthClientKey: 'one' },
+      session: { orgConfig: ORG_CONFIG, oauthState: 'st', authType: 'site', regenerate: jest.fn((cb) => cb(null)) },
       query: { code: 'code', state: 'st' }
     });
 
     await authController.callback(req, mockRes());
 
     expect(sfService.getTokenAuthCode).toHaveBeenCalledWith(
-      expect.any(String),
-      authConfig.endpoints.authServerTwo.tokenEndpoint,
+      'code',
+      `${ORG_CONFIG.siteUrl}/services/oauth2/token`,
       expect.any(Object)
     );
+  });
+});
+
+// ── startClientCredentialsFlow ─────────────────────────────────────────────
+
+describe('startClientCredentialsFlow', () => {
+  test('redirects to /setup when orgConfig is missing', async () => {
+    const req = mockReq({ session: { orgConfig: null, regenerate: jest.fn((cb) => cb(null)) } });
+    const res = mockRes();
+    await authController.startClientCredentialsFlow(req, res);
+    expect(res.redirect).toHaveBeenCalledWith('/setup');
+  });
+
+  test('renders clientindex on success', async () => {
+    sfService.getTokenClientCreds.mockResolvedValue({ access_token: 'cc_tok', instance_url: 'https://myorg.my.salesforce.com' });
+    const req = mockReq({
+      session: { orgConfig: ORG_CONFIG, regenerate: jest.fn((cb) => cb(null)) },
+    });
+    const res = mockRes();
+
+    await authController.startClientCredentialsFlow(req, res);
+
+    expect(res.render).toHaveBeenCalledWith('clientindex', expect.objectContaining({ access_token: 'cc_tok' }));
+  });
+
+  test('calls getTokenClientCreds with instanceUrl token endpoint and orgConfig credentials', async () => {
+    sfService.getTokenClientCreds.mockResolvedValue({ access_token: 'tok', instance_url: 'https://myorg.my.salesforce.com' });
+    const req = mockReq({
+      session: { orgConfig: ORG_CONFIG, regenerate: jest.fn((cb) => cb(null)) },
+    });
+
+    await authController.startClientCredentialsFlow(req, mockRes());
+
+    expect(sfService.getTokenClientCreds).toHaveBeenCalledWith(
+      `${ORG_CONFIG.instanceUrl}/services/oauth2/token`,
+      { client_id: ORG_CONFIG.clientId }
+    );
+  });
+
+  test('calls handleAxiosError on service failure', async () => {
+    const err = new Error('creds failed');
+    sfService.getTokenClientCreds.mockRejectedValue(err);
+    const req = mockReq({
+      session: { orgConfig: ORG_CONFIG, regenerate: jest.fn((cb) => cb(null)) },
+    });
+    const res = mockRes();
+
+    await authController.startClientCredentialsFlow(req, res);
+
+    expect(handleAxiosError).toHaveBeenCalledWith(err, res, 'Client Credentials');
   });
 });

@@ -5,9 +5,7 @@ const isString = (v) => typeof v === 'string';
 
 /**
  * Validates the username and captcha token, then initiates a headless password reset
- * on the Experience Cloud portal.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
+ * on the Experience Cloud portal configured in the session org config.
  */
 exports.forgotPassword = async (req, res) => {
   const { username, captchaToken } = req.body;
@@ -17,8 +15,14 @@ exports.forgotPassword = async (req, res) => {
   if (!isString(captchaToken) || captchaToken.length === 0) {
     return res.status(400).json({ error: 'Invalid captcha token' });
   }
+
+  const siteUrl = req.session.orgConfig?.siteUrl;
+  if (!siteUrl) {
+    return res.status(400).json({ error: 'Experience Cloud Site URL not configured. Go to /setup and set Site URL.' });
+  }
+
   try {
-    const result = await sfService.headlessPasswordReset(username, captchaToken);
+    const result = await sfService.headlessPasswordReset(username, captchaToken, siteUrl);
     return res.json(result);
   } catch (err) {
     handleAxiosError(err, res, "Headless Reset Password");
@@ -28,8 +32,6 @@ exports.forgotPassword = async (req, res) => {
 /**
  * Validates username, OTP, new password strength, and recaptcha, then sets the new
  * password on the Experience Cloud portal via the headless identity API.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
  */
 exports.newPassword = async (req, res) => {
   const { username, otp, newpassword, recaptcha } = req.body;
@@ -45,8 +47,14 @@ exports.newPassword = async (req, res) => {
   if (!isString(recaptcha) || recaptcha.length === 0) {
     return res.status(400).json({ error: 'Invalid recaptcha token' });
   }
+
+  const siteUrl = req.session.orgConfig?.siteUrl;
+  if (!siteUrl) {
+    return res.status(400).json({ error: 'Experience Cloud Site URL not configured. Go to /setup and set Site URL.' });
+  }
+
   try {
-    const result = await sfService.headlessPasswordSet(username, otp, newpassword, recaptcha);
+    const result = await sfService.headlessPasswordSet(username, otp, newpassword, recaptcha, siteUrl);
     return res.json(result);
   } catch (err) {
     handleAxiosError(err, res, "Headless Set Password");

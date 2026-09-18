@@ -5,11 +5,11 @@ router.use("/", require("./login"));
 router.use("/", require("./idp"));
 router.use("/", require("./admin"));
 router.use("/", require("./feed"));
+router.use("/", require("./setup"));
 router.use("/", require("./pages"));
 router.use("/", require("./auth"));
 router.use("/", require("./api"));
 router.use("/", require("./headless"));
-router.use("/", require("./connectivityTest"));
 router.use("/", require("./metadata"));
 
 module.exports = router;

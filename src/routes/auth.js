@@ -1,13 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const connectivityTestController = require("../controllers/connectivityTestController");
+const lightningOutController = require("../controllers/lightningOutController");
+const { ensureAuthenticated } = require("../middleware/ensureAuthenticated");
 
-/**
- * Middleware that blocks the client credentials OAuth flow when the
- * DISABLE_CLIENT_CREDENTIALS env var is set to 'true'.
- * @type {import('express').RequestHandler}
- */
 const requireClientCredsEnabled = (req, res, next) => {
   if (process.env.DISABLE_CLIENT_CREDENTIALS === 'true') {
     return res.status(403).render('error', { error: 'Client credentials flow is currently disabled.' });
@@ -15,36 +11,33 @@ const requireClientCredsEnabled = (req, res, next) => {
   next();
 };
 
-router.get("/authorizeone", (req, res) => authController.startAuth(req, res, 'one'));
-router.get("/authorizetwo", (req, res) => authController.startAuth(req, res, 'two'));
-router.get("/authorizethree", requireClientCredsEnabled, (req, res) => authController.startClientCredentialsFlow(req, res));
-router.get("/authorizereuse", (req, res) => authController.startAuth(req, res, 'reuse'));
-router.get("/webserverflow", (req, res) => authController.startAuth(req, res, 'authServer'));
-// TODO impl
-router.get("/authorizecodecredsflow", (req, res) => authController.startAuth(req, res, 'reuse'));
-router.get("/revokeoauthtoken", (req, res) => authController.startAuth(req, res, 'reuse'));
+// Authorization Code flow — standard instance URL
+router.get("/authorize", (req, res) => authController.startAuth(req, res, 'standard'));
 
+// Authorization Code flow — Experience Cloud site URL
+router.get("/authorizesite", (req, res) => authController.startAuth(req, res, 'site'));
+
+// Client Credentials flow
+router.get("/authorizeclientcreds", requireClientCredsEnabled, (req, res) => authController.startClientCredentialsFlow(req, res));
+
+// OAuth callbacks
 router.get("/callback", authController.callback);
-router.get("/callbacknoncommunity", authController.callback);
-router.get("/callbackbyoca", connectivityTestController.callbackByoca);
-// TODO impl
-router.get("/callbackcodeexchange", authController.callback);
-router.get("/callbackreuse", authController.callback);
+router.get("/callbacklightningout", ensureAuthenticated, lightningOutController.callback);
 
-router.get("/createaccount", (req, res) => {
-  req.session.action = 'createAccount';
-  authController.startAuth(req, res, 'authServer');
-});
+// Action-triggered auth flows (auth then redirect to feature)
 router.get("/downloadReport", (req, res) => {
   req.session.action = 'report';
-  authController.startAuth(req, res, 'authServer');
+  authController.startAuth(req, res, 'standard');
 });
 router.get("/serveReport", authController.serveReportPage);
 router.get("/serveReport/download", authController.serveReportDownload);
-// TODO impl
-router.get("/publishPlatfromEvent", (req, res) => {
+
+router.get("/publishPlatformEvent", (req, res) => {
   req.session.action = 'platformEvent';
-  authController.startAuth(req, res, 'authServer');
+  authController.startAuth(req, res, 'standard');
 });
+
+// Lightning Out
+router.get("/render-lwc", ensureAuthenticated, lightningOutController.renderLwc);
 
 module.exports = router;

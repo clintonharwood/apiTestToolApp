@@ -1,0 +1,98 @@
+<%- include('partials/_head', { title: 'Org Setup — Clintox' }) %>
+
+<h1 class="mb-2">Org Setup</h1>
+<p class="page-desc">Enter your Connected App credentials to use the test tools against your own Salesforce org. Credentials are held in your session only and never stored.</p>
+
+<div class="alert alert-info mb-3" role="alert">
+  <strong>Note:</strong> Your credentials are stored in your browser session and will expire after <strong>15 minutes</strong>. You'll need to re-enter them after that.
+</div>
+
+<% if (error) { %>
+  <div class="alert alert-danger mb-3" role="alert"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/setup" class="mb-4">
+
+  <h2 class="mb-3" style="font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Required</h2>
+
+  <div class="mb-3">
+    <label for="instanceUrl" class="form-label">Instance URL <span class="text-danger">*</span></label>
+    <input type="url" id="instanceUrl" name="instanceUrl" class="form-control"
+           placeholder="https://myorg.my.salesforce.com" required
+           value="<%= orgConfig.instanceUrl || '' %>">
+    <div class="form-hint">Your org's My Domain URL.</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="clientId" class="form-label">Client ID (Consumer Key) <span class="text-danger">*</span></label>
+    <input type="text" id="clientId" name="clientId" class="form-control font-monospace"
+           autocomplete="off" required
+           value="<%= orgConfig.clientId || '' %>">
+  </div>
+
+  <div class="alert alert-warning mb-4" role="alert">
+    <strong>Connected App Setup</strong>
+    <p class="mb-2 mt-1">In Salesforce Setup, create a Connected App with these OAuth settings:</p>
+    <ul class="mb-0">
+      <li>Enable OAuth Settings: <strong>checked</strong></li>
+      <li>Callback URL: <code><%= baseUrl %>/callback</code></li>
+      <li>Selected OAuth Scopes: configure as required by your use case</li>
+      <li>Require Secret for Web Server Flow: <strong>unchecked</strong></li>
+      <li>Require Secret for API Requests: <strong>unchecked</strong></li>
+    </ul>
+  </div>
+
+  <details class="mb-4" <%= (orgConfig.siteUrl || orgConfig.webToCaseOrgId || orgConfig.lightningAppId || orgConfig.reportId || orgConfig.platformEventName) ? 'open' : '' %>>
+    <summary style="cursor:pointer;font-weight:600;margin-bottom:1rem;">Optional — feature-specific settings</summary>
+
+    <div class="mb-3">
+      <label for="siteUrl" class="form-label">Experience Cloud Site URL</label>
+      <input type="url" id="siteUrl" name="siteUrl" class="form-control"
+             placeholder="https://myorg.my.site.com/myportal"
+             value="<%= orgConfig.siteUrl || '' %>">
+      <div class="form-hint">Required for Headless Identity and site-domain OAuth flows.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="webToCaseOrgId" class="form-label">Web-to-Case Org ID</label>
+      <input type="text" id="webToCaseOrgId" name="webToCaseOrgId" class="form-control font-monospace"
+             placeholder="00D000000000000AAA"
+             value="<%= orgConfig.webToCaseOrgId || '' %>">
+      <div class="form-hint">18-char Org ID. Found in Setup &rarr; Company Information.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="lightningAppId" class="form-label">Lightning App ID</label>
+      <input type="text" id="lightningAppId" name="lightningAppId" class="form-control font-monospace"
+             placeholder="1Us000000000000AAA"
+             value="<%= orgConfig.lightningAppId || '' %>">
+      <div class="form-hint">Required for Lightning Out 2.0. The record ID of your Lightning App.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="reportId" class="form-label">Report ID</label>
+      <input type="text" id="reportId" name="reportId" class="form-control font-monospace"
+             placeholder="00O000000000000AAA"
+             value="<%= orgConfig.reportId || '' %>">
+      <div class="form-hint">Required for Report Download. The record ID of your Analytics report.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="platformEventName" class="form-label">Platform Event API Name</label>
+      <input type="text" id="platformEventName" name="platformEventName" class="form-control font-monospace"
+             placeholder="My_Event__e"
+             value="<%= orgConfig.platformEventName || '' %>">
+      <div class="form-hint">Required for Create Platform Event. Must end in <code>__e</code>.</div>
+    </div>
+  </details>
+
+  <button type="submit" class="btn btn-primary">Save &amp; Continue</button>
+</form>
+
+<% if (orgConfig.instanceUrl) { %>
+  <form method="POST" action="/setup/clear">
+    <button type="submit" class="btn btn-secondary">Clear Config &amp; Start Over</button>
+  </form>
+<% } %>
+
+<%- include('partials/_foot') %>

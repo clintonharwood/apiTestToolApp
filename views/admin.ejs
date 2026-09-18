@@ -8,9 +8,16 @@
 <div class="card" style="max-width:560px">
   <div class="card-body">
     <p>Welcome, <strong><%= user.displayName || user.username || user.salesforceId %></strong>.</p>
-    <p class="text-secondary" style="font-size:0.875rem">Add your admin content here.</p>
     <a href="/logout" class="btn btn-outline-secondary btn-sm">Sign out</a>
   </div>
 </div>
+
+<ul class="tool-list">
+  <li><a href="/casedetailsvfpage">iframe VF Page Test</a></li>
+  <li><a href="/randomsfpage">Random Salesforce Developer Doc Generator</a></li>
+  <li><a href="/headlessIdentity">Headless Identity — Password Reset</a></li>
+  <li><a href="/render-lwc">Lightning Out 2.0 Test</a></li>
+  <li><a href="/feed">Salesforce Social Media Feed</a></li>
+</ul>
 
 <%- include('partials/_foot') %>

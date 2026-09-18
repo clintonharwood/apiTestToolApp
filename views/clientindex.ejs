@@ -1,7 +1,14 @@
 <%- include('partials/_head', { title: 'OAuth Test — Clintox' }) %>
 
 <h1>OAuth Test</h1>
-<p class="page-desc">Initiate an OAuth flow.</p>
+<p class="page-desc">Initiate an OAuth flow against your configured org.</p>
+
+<div class="mb-4">
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <span class="form-label-upper">Connected Org</span>
+  </div>
+  <div class="token-box"><%= orgConfig.instanceUrl %></div>
+</div>
 
 <div class="mb-4">
   <div class="d-flex align-items-center gap-2 mb-1">
@@ -11,13 +18,15 @@
 </div>
 
 <ul class="tool-list">
-  <li><a href="/authorizeone">Get OAuth Token Custom Domain</a></li>
-  <li><a href="/authorizetwo">Get OAuth Token Site.com Domain</a></li>
-  <% if (clientCredsEnabled) { %><li><a href="/authorizeThree">Get Client Credentials Token</a></li><% } %>
-  <!--<li><a href="/authorizereuse">Reuse Auth Code</a></li>-->
-  <!--<li><a href="/authorizecodecredsflow">Headless Identity — Auth Code &amp; Credentials Flow</a></li>-->
-  <li><a href="/revokeoauthtoken">Revoke OAuth Token</a></li>
-  <li><a href="/webserverflow">OAuth Web Server Flow</a></li>
+  <li><a href="/authorize">Authorization Code Flow (instance URL)</a></li>
+  <% if (orgConfig.siteUrl) { %>
+  <li><a href="/authorizesite">Authorization Code Flow (site URL: <%= orgConfig.siteUrl %>)</a></li>
+  <% } %>
+  <% if (clientCredsEnabled) { %>
+  <li><a href="/authorizeclientcreds">Client Credentials Flow</a></li>
+  <% } %>
 </ul>
+
+<p class="mt-3"><a href="/setup">Change org config</a></p>
 
 <%- include('partials/_foot') %>

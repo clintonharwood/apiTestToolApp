@@ -1,0 +1,24 @@
+<%- include('partials/_head', { title: 'CSP Frame-Ancestors Test — Clintox' }) %>
+
+<div class="page-header">
+  <h1 class="mb-1">CSP Frame-Ancestors Test</h1>
+  <p class="page-desc">
+    This page is served with <code>Content-Security-Policy: frame-ancestors 'self'</code>.
+    Same-origin pages may embed it; any other site is refused by the browser.
+  </p>
+</div>
+
+<h2>The video</h2>
+<video controls width="640" src="/video.mp4">
+  Your browser does not support the video tag.
+</video>
+
+<h2 class="mt-4">Same-origin embed (positive control)</h2>
+<p class="page-desc">
+  The iframe below loads <code>/video.mp4</code> from this same origin, so
+  <code>frame-ancestors 'self'</code> permits it — proving the policy still allows our own site.
+  Embedding this asset from any other origin would be blocked by the browser.
+</p>
+<iframe src="/video.mp4" width="680" height="480" title="Same-origin embed of the video"></iframe>
+
+<%- include('partials/_foot') %>

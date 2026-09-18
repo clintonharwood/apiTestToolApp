@@ -16,16 +16,10 @@ const mockRes = () => {
 beforeEach(() => jest.clearAllMocks());
 
 describe('showChaos', () => {
-  test('renders chaos view with hasToken true when session has accessToken', () => {
+  test('renders chaos view with results null', () => {
     const res = mockRes();
     chaosController.showChaos(mockReq(), res);
-    expect(res.render).toHaveBeenCalledWith('chaos', { results: null, hasToken: true });
-  });
-
-  test('renders chaos view with hasToken false when session has no accessToken', () => {
-    const res = mockRes();
-    chaosController.showChaos(mockReq({ accessToken: undefined }), res);
-    expect(res.render).toHaveBeenCalledWith('chaos', { results: null, hasToken: false });
+    expect(res.render).toHaveBeenCalledWith('chaos', { results: null });
   });
 });
 

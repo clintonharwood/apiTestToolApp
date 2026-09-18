@@ -58,7 +58,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: "lax", maxAge: 60000 * 30 },
+  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: "lax", maxAge: 60000 * 15 },
 }));
 
 // Passport

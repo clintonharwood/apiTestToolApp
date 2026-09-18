@@ -4,9 +4,8 @@ const API_VERSION = 'v60.0';
 const TIMEOUT = 15000;
 
 exports.showPage = (req, res) => {
-  if (!req.session.accessToken) {
-    return res.redirect('/auth');
-  }
+  if (!req.session.orgConfig) return res.redirect('/setup');
+  if (!req.session.accessToken) return res.redirect('/auth');
   res.render('metadata');
 };
 

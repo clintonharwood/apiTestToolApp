@@ -1,4 +1,5 @@
 jest.mock('../../src/controllers/webToCaseController', () => ({
+  showPage: jest.fn(),
   start: jest.fn(),
 }));
 
@@ -51,12 +52,12 @@ describe('requireWebToCaseEnabled middleware', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  test('/webtocase route has two handlers (guard + controller)', () => {
+  test('/webtocase route has three handlers (requireWebToCaseEnabled + hasOrgConfig + controller)', () => {
     jest.resetModules();
     const router = require('../../src/routes/pages');
     const layer = router.stack.find(
       l => l.route && l.route.path === '/webtocase'
     );
-    expect(layer.route.stack.length).toBe(2);
+    expect(layer.route.stack.length).toBe(3);
   });
 });
