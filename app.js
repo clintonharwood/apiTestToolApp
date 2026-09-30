@@ -20,6 +20,7 @@ if (!sessionSecret) throw new Error("SESSION_SECRET environment variable is requ
 // Configuration
 const buildCspConfig = require("./src/config/csp");
 const routes = require("./src/routes/index");
+const { mcpHandler } = require("./src/mcp/server");
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -82,6 +83,11 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", routes);
+
+// MCP server (Streamable HTTP) — lets agents drive the mock /v1/* API as tools.
+// A protocol endpoint rather than an EJS route, so it's mounted directly here,
+// before the 404 handler. Public, consistent with the /v1/* endpoints it wraps.
+app.all("/mcp", mcpHandler);
 
 // 404 Handle
 app.use((req, res) => res.status(404).render("error", { error: "Page not found" }));

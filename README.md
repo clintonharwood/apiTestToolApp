@@ -16,6 +16,7 @@ https://clintox.xyz
 - **Web-to-Case form** — test Salesforce case submission
 - **Connectivity tester** — validate end-to-end connectivity with a custom org using your own credentials
 - **Mock API endpoints** — simulate slow responses, errors, timeouts, and record creation
+- **MCP server** — exposes the mock API endpoints as Model Context Protocol tools so AI agents can drive them (see below)
 - **Salesforce Social Media Feed** — infinite-scroll feed of curated Salesforce documentation posts across Apex/SOQL, LWC, Flow, and Platform Architecture
 
 ## Tech Stack
@@ -85,6 +86,38 @@ Copy `.env.example` to `.env` and populate the values.
 | `DISABLE_CLIENT_CREDENTIALS` | — | Set to `true` to disable client credentials flow |
 | `DISABLE_WEB_TO_CASE` | — | Set to `true` to disable Web-to-Case route |
 
+## MCP Server
+
+The app exposes a [Model Context Protocol](https://modelcontextprotocol.io) server over the
+**Streamable HTTP** transport at `POST /mcp` (same origin as the app — e.g.
+`http://localhost:3003/mcp`). It lets AI agents drive the mock `/v1/*` API as tools. The server
+runs in stateless mode inside the Express app, so there is no separate process to start.
+
+| Tool | Wraps | Behavior |
+|---|---|---|
+| `get_products` | `GET /v1/all` | Returns a canned product list after a ~20s delay (slow-API simulation) |
+| `trigger_server_error` | `GET /v1/500` | Returns the 500 response body as an error result |
+| `create_record` | `POST /v1/create` | Returns 201; forwards an optional JSON `body` argument |
+| `test_timeout` | `GET /v1/timeout` | Aborts after ~5s and returns a timeout result (rather than hanging) |
+
+The endpoint is unauthenticated, consistent with the public `/v1/*` endpoints it wraps.
+
+**Try it with the MCP Inspector:**
+
+```bash
+npm start                                   # start the app on :3003
+npx @modelcontextprotocol/inspector         # connect via "Streamable HTTP" to http://localhost:3003/mcp
+```
+
+**Register it with an MCP client (e.g. Claude Code):**
+
+```bash
+claude mcp add --transport http clintox http://localhost:3003/mcp
+```
+
+Implemented in `src/mcp/` (`tools.js` = tool definitions, `server.js` = server + transport),
+mounted in `app.js`. Depends on `@modelcontextprotocol/sdk` and `zod`.
+
 ## Running Tests
 
 ```bash
@@ -111,6 +144,9 @@ apiTestToolApp/
 │   │   ├── chaosController.js
 │   │   ├── connectivityTestController.js
 │   │   └── feedController.js
+│   ├── mcp/
+│   │   ├── tools.js          # MCP tool definitions for the mock /v1/* API
+│   │   └── server.js         # MCP server + Streamable HTTP handler (mounted at /mcp)
 │   ├── models/
 │   │   └── Post.js           # Mongoose schema for feed posts
 │   ├── routes/               # Express route definitions

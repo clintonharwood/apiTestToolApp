@@ -14,6 +14,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "@node-saml/passport-saml": "^5.1.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
@@ -32,7 +33,8 @@
     "passport-local": "^1.0.0",
     "qs": "^6.11.2",
     "randomstring": "^1.3.0",
-    "samlify": "^2.13.1"
+    "samlify": "^2.13.1",
+    "zod": "^4.6.5"
   },
   "engines": {
     "node": "^24",
